@@ -1,0 +1,858 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gerador de Cards D&D 2024</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      /* Fontes de fantasia e RPG */
+      @import url("https://fonts.googleapis.com/css2?family=Cinzel:wght=600;800&family=Playfair+Display:ital,wght=0,600;1,400&family=Roboto+Condensed:wght=400;700&family=Spectral:ital,wght=0,400;0,600;1,400&display=swap");
+
+      body {
+        font-family: "Spectral", serif;
+        background-color: #121214;
+        color: #e1e1e6;
+      }
+
+      /* CONFIGURAÇÃO ESTRITA DE TAMANHO (127mm x 88mm) */
+      .card-container {
+        width: 127mm;
+        height: 88mm;
+        min-width: 127mm;
+        min-height: 88mm;
+        max-width: 127mm;
+        max-height: 88mm;
+        position: relative;
+        box-sizing: border-box;
+        overflow: hidden;
+        background-color: #fff;
+        color: #000;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        display: flex;
+
+        /* Força a renderização de cores e fundos na impressão/PDF */
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      /* CARD DE ARTE (FRENTE) */
+      .card-art {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        background-color: #1a1a1a;
+        overflow: hidden;
+      }
+
+      /* Tag img real para garantir renderização perfeita no PDF */
+      .art-image-bg {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1;
+      }
+
+      .art-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 42px; /* Espaço da aba */
+        background: linear-gradient(
+          0deg,
+          rgba(0, 0, 0, 0.95) 0%,
+          rgba(0, 0, 0, 0.6) 50%,
+          rgba(0, 0, 0, 0) 100%
+        );
+        padding: 15px;
+        color: white;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        height: 60%;
+        z-index: 2;
+      }
+
+      .art-title {
+        font-family: "Cinzel", serif;
+        font-size: 1.6rem;
+        line-height: 1.1;
+        text-transform: uppercase;
+        font-weight: 800;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9);
+      }
+
+      .art-subtitle {
+        font-family: "Playfair Display", serif;
+        font-style: italic;
+        font-size: 0.9rem;
+        color: #ddd;
+        margin-top: 2px;
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.9);
+      }
+
+      /* Aba Lateral */
+      .monster-sidebar {
+        width: 42px;
+        background-color: #4c1d6f !important;
+        color: white;
+        height: 100%;
+        position: absolute;
+        right: 0;
+        top: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-left: 2px solid #6b21a8;
+        z-index: 3;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      .sidebar-text {
+        writing-mode: vertical-rl;
+        text-orientation: mixed;
+        transform: rotate(180deg);
+        font-family: "Cinzel", serif;
+        font-size: 0.95rem;
+        font-weight: bold;
+        letter-spacing: 3px;
+      }
+
+      .token-container {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        overflow: hidden;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        background-color: #333;
+      }
+
+      .token-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .artist-credit {
+        writing-mode: vertical-rl;
+        text-orientation: mixed;
+        transform: rotate(180deg);
+        font-size: 0.5rem;
+        color: #d8b4fe;
+      }
+
+      /* CARD DE ATRIBUTOS (VERSO) */
+      .card-stats {
+        padding: 10px 12px;
+        background-color: #fcf8f2 !important;
+        background-image: radial-gradient(
+          circle,
+          #fcfaf7 0%,
+          #f4eae0 100%
+        ) !important;
+        display: grid;
+        grid-template-columns: 1.15fr 0.85fr;
+        gap: 10px;
+        width: 100%;
+        height: 100%;
+        border: 4px double #d4af37;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      .stat-header {
+        border-bottom: 2px solid #7c2d12;
+        padding-bottom: 2px;
+        margin-bottom: 4px;
+      }
+
+      .monster-name {
+        font-family: "Cinzel", serif;
+        color: #7c2d12;
+        font-size: 1.2rem;
+        line-height: 1;
+        font-weight: bold;
+      }
+
+      .monster-meta {
+        font-family: "Playfair Display", serif;
+        font-style: italic;
+        font-size: 0.75rem;
+        color: #4b5563;
+      }
+
+      .stat-badge {
+        font-family: "Roboto Condensed", sans-serif;
+        font-size: 0.72rem;
+        margin: 2px 0;
+      }
+
+      /* Tabela de Atributos */
+      .ability-table {
+        width: 100%;
+        font-family: "Roboto Condensed", sans-serif;
+        text-align: center;
+        font-size: 0.62rem;
+        border-collapse: collapse;
+        margin-top: 4px;
+      }
+
+      .ability-table th {
+        color: #7c2d12;
+        font-weight: bold;
+        padding: 1px;
+        border-bottom: 1px solid #7c2d12;
+      }
+
+      .ability-table td {
+        padding: 2px 1px;
+        line-height: 1.1;
+      }
+
+      .ability-val {
+        font-weight: bold;
+        font-size: 0.72rem;
+      }
+
+      .ability-save {
+        color: #6b7280;
+        font-size: 0.55rem;
+      }
+
+      .cr-badge {
+        position: absolute;
+        top: 10px;
+        right: 12px;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        border: 2px solid #7c2d12;
+        background: #fff !important;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-family: "Roboto Condensed", sans-serif;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      .cr-label {
+        font-size: 0.35rem;
+        text-transform: uppercase;
+        line-height: 1;
+        color: #4b5563;
+      }
+
+      .cr-value {
+        font-weight: bold;
+        font-size: 0.8rem;
+        line-height: 1;
+        color: #7c2d12;
+      }
+
+      .details-section {
+        font-size: 0.65rem;
+        line-height: 1.15;
+        overflow-y: auto;
+        max-height: 235px;
+        padding-right: 2px;
+      }
+
+      .details-section::-webkit-scrollbar {
+        width: 3px;
+      }
+      .details-section::-webkit-scrollbar-thumb {
+        background-color: #c2b097;
+        border-radius: 2px;
+      }
+
+      .section-title {
+        font-family: "Cinzel", serif;
+        font-size: 0.7rem;
+        color: #7c2d12;
+        border-bottom: 1px solid #c2b097;
+        margin-top: 4px;
+        margin-bottom: 2px;
+        font-weight: bold;
+        text-transform: uppercase;
+      }
+
+      .block-text {
+        margin-bottom: 4px;
+      }
+
+      .block-title {
+        font-weight: bold;
+        font-style: italic;
+      }
+
+      /* CSS DE IMPRESSÃO */
+      @media print {
+        body {
+          background: none !important;
+          color: #000 !important;
+          padding: 0 !important;
+          margin: 0 !important;
+        }
+        .no-print {
+          display: none !important;
+        }
+        .print-container {
+          display: flex !important;
+          flex-direction: row !important;
+          flex-wrap: wrap !important;
+          gap: 15px !important;
+          justify-content: center !important;
+          padding: 10mm 0 !important;
+        }
+        .card-container {
+          box-shadow: none !important;
+          border: 1px solid #aaa !important;
+          page-break-inside: avoid !important;
+        }
+      }
+    </style>
+  </head>
+  <body class="p-4 md:p-8">
+    <div
+      class="max-w-6xl mx-auto no-print bg-neutral-900 p-6 rounded-xl shadow-2xl mb-8 border border-neutral-800"
+    >
+      <h1
+        class="text-3xl font-extrabold text-amber-500 mb-2 flex items-center gap-2"
+      >
+        ⚔️ D&D 2024 Card Maker Pro (D&D 5e API)
+      </h1>
+      <p class="text-neutral-400 text-sm mb-6">
+        Geração de cards no tamanho exato de
+        <span class="text-white font-semibold">127mm x 88mm</span> utilizando dados oficiais direto da API Pública de D&D 5e.
+      </p>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="space-y-4">
+          <h3
+            class="text-lg font-bold text-neutral-200 border-b border-neutral-800 pb-2"
+          >
+            1. Escolher Criatura
+          </h3>
+          <div>
+            <label class="block text-xs text-neutral-400 font-semibold mb-1"
+              >Filtrar por nome</label
+            >
+            <div class="flex gap-2">
+              <input
+                type="text"
+                id="monster-search"
+                placeholder="Ex: Dragon, Goblin, Lich..."
+                class="w-full bg-neutral-800 border border-neutral-700 rounded px-3 py-2 text-white focus:outline-none focus:border-amber-500 text-sm"
+              />
+              <button
+                id="btn-search"
+                class="bg-amber-600 hover:bg-amber-500 text-white px-4 py-2 rounded text-sm font-semibold transition"
+              >
+                Filtrar
+              </button>
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs text-neutral-400 font-semibold mb-1"
+              >Monstros Disponíveis</label
+            >
+            <select
+              id="monster-select"
+              class="w-full bg-neutral-800 border border-neutral-700 rounded px-3 py-2 text-white text-sm focus:outline-none focus:border-amber-500"
+            >
+              <option value="">Carregando banco de dados...</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3
+            class="text-lg font-bold text-neutral-200 border-b border-neutral-800 pb-2"
+          >
+            2. Personalizar Arte & Imagem
+          </h3>
+          <div>
+            <label class="block text-xs text-neutral-400 font-semibold mb-1"
+              >URL da Imagem da Frente</label
+            >
+            <input
+              type="text"
+              id="art-url"
+              placeholder="Insira o link da imagem (ou use a padrão da API)"
+              class="w-full bg-neutral-800 border border-neutral-700 rounded px-3 py-2 text-white focus:outline-none focus:border-amber-500 text-sm mb-2"
+            />
+
+            <label class="block text-xs text-neutral-400 font-semibold mb-1"
+              >Ou usar arquivo local</label
+            >
+            <input
+              type="file"
+              id="art-file"
+              accept="image/*"
+              class="w-full text-xs text-neutral-400 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-neutral-800 file:text-neutral-200 hover:file:bg-neutral-700 cursor-pointer"
+            />
+          </div>
+          <div>
+            <label class="block text-xs text-neutral-400 font-semibold mb-1"
+              >Créditos da Ilustração</label
+            >
+            <input
+              type="text"
+              id="artist-name"
+              value="Wizards of the Coast"
+              class="w-full bg-neutral-800 border border-neutral-700 rounded px-3 py-2 text-white focus:outline-none focus:border-amber-500 text-sm"
+            />
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h3
+            class="text-lg font-bold text-neutral-200 border-b border-neutral-800 pb-2"
+          >
+            3. Exportar PDF
+          </h3>
+          <div class="pt-2">
+            <button
+              onclick="window.print()"
+              class="w-full bg-amber-500 hover:bg-amber-400 text-neutral-950 font-bold py-3 px-4 rounded-lg shadow-lg flex items-center justify-center gap-2 transition"
+            >
+              🖨️ Salvar PDF / Imprimir
+            </button>
+            <p class="text-xs text-neutral-500 mt-2">
+              💡 <strong>Nota Importante:</strong> Na tela de impressão, lembre-se de marcar a opção <strong>"Gráficos de segundo plano"</strong> ou <strong>"Background graphics"</strong> nas configurações para que as texturas e cores de fundo apareçam no PDF.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="print-container max-w-6xl mx-auto flex flex-col md:flex-row gap-8 justify-center items-center"
+    >
+      <div class="flex flex-col items-center gap-2">
+        <span
+          class="no-print text-xs font-semibold text-neutral-400 uppercase tracking-widest"
+          >Lado A: Frente (Arte)</span
+        >
+        <div id="card-front" class="card-container rounded-lg overflow-hidden">
+          <div class="card-art">
+            <img
+              id="preview-art-img"
+              class="art-image-bg"
+              src="https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=600"
+              alt="Monster Art"
+            />
+
+            <div class="art-overlay">
+              <div class="art-title" id="preview-art-title">
+                BUGBEAR WARRIOR
+              </div>
+              <div class="art-subtitle" id="preview-art-subtitle">
+                Lurking Goblinoid Brute
+              </div>
+            </div>
+
+            <div class="monster-sidebar">
+              <div class="token-container">
+                <img
+                  id="preview-token-img"
+                  class="token-image"
+                  src="https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=150"
+                  alt="Token"
+                />
+              </div>
+              <div class="sidebar-text">MONSTER</div>
+              <div class="artist-credit" id="preview-artist">
+                Art by Wizards of the Coast
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-col items-center gap-2">
+        <span
+          class="no-print text-xs font-semibold text-neutral-400 uppercase tracking-widest"
+          >Lado B: Verso (Ficha)</span
+        >
+        <div id="card-back" class="card-container rounded-lg overflow-hidden">
+          <div class="card-stats">
+            <div>
+              <div class="stat-header">
+                <div class="monster-name" id="preview-stat-name">
+                  Bugbear Warrior
+                </div>
+                <div class="monster-meta" id="preview-stat-meta">
+                  Medium Fey (Goblinoid)
+                </div>
+              </div>
+              <div class="stat-badge">
+                <strong>AC</strong> <span id="preview-ac">14</span> |
+                <strong>HP</strong> <span id="preview-hp">33</span>
+              </div>
+              <div class="stat-badge">
+                <strong>Speed</strong> <span id="preview-speed">30 ft.</span>
+              </div>
+
+              <table class="ability-table">
+                <thead>
+                  <tr>
+                    <th>STR</th>
+                    <th>DEX</th>
+                    <th>CON</th>
+                    <th>INT</th>
+                    <th>WIS</th>
+                    <th>CHA</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr id="ability-scores">
+                    <td>
+                      <span class="ability-val">15 (+2)</span><br /><span
+                        class="ability-save"
+                        >Save +2</span
+                      >
+                    </td>
+                    <td>
+                      <span class="ability-val">14 (+2)</span><br /><span
+                        class="ability-save"
+                        >Save +2</span
+                      >
+                    </td>
+                    <td>
+                      <span class="ability-val">13 (+1)</span><br /><span
+                        class="ability-save"
+                        >Save +1</span
+                      >
+                    </td>
+                    <td>
+                      <span class="ability-val">8 (-1)</span><br /><span
+                        class="ability-save"
+                        >Save -1</span
+                      >
+                    </td>
+                    <td>
+                      <span class="ability-val">11 (+0)</span><br /><span
+                        class="ability-save"
+                        >Save +0</span
+                      >
+                    </td>
+                    <td>
+                      <span class="ability-val">9 (-1)</span><br /><span
+                        class="ability-save"
+                        >Save -1</span
+                      >
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div class="stat-badge mt-2" id="preview-skills-senses">
+                <strong>Skills:</strong> Stealth +6, Survival +2<br />
+                <strong>Senses:</strong> Darkvision 60 ft.
+              </div>
+            </div>
+
+            <div class="details-section" id="preview-details">
+              <div class="section-title">Traits</div>
+              <div class="block-text">
+                <strong>Abduct.</strong> The bugbear needn't spend extra
+                movement to move a creature it is grappling.
+              </div>
+
+              <div class="section-title">Actions</div>
+              <div class="block-text">
+                <strong>Light Hammer.</strong> Melee or Ranged Weapon Attack: +4
+                to hit, reach 5 ft. or range 20/60 ft., one target. Hit: 4 (1d4
+                + 2) bludgeoning damage.
+              </div>
+            </div>
+
+            <div class="cr-badge">
+              <span class="cr-label">CR</span>
+              <span class="cr-value" id="preview-cr">1</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const API_BASE_URL = "https://www.dnd5eapi.co/api";
+      let allMonsters = [];
+
+      document.addEventListener("DOMContentLoaded", () => {
+        fetchMonsterIndex();
+        setupEvents();
+      });
+
+      function setupEvents() {
+        document
+          .getElementById("btn-search")
+          .addEventListener("click", filterMonsters);
+        document
+          .getElementById("monster-search")
+          .addEventListener("keypress", (e) => {
+            if (e.key === "Enter") filterMonsters();
+          });
+        document
+          .getElementById("monster-select")
+          .addEventListener("change", (e) => {
+            if (e.target.value) loadMonsterContent(e.target.value);
+          });
+
+        // Inputs manuais de imagem e crédito
+        document.getElementById("art-url").addEventListener("input", (e) => {
+          if (e.target.value) changeImage(e.target.value);
+        });
+        document
+          .getElementById("art-file")
+          .addEventListener("change", handleFile);
+        document
+          .getElementById("artist-name")
+          .addEventListener("input", (e) => {
+            document.getElementById("preview-artist").innerText =
+              `Art by ${e.target.value}`;
+          });
+      }
+
+      // 1. Carrega todos os monstros da API de D&D 5e
+      async function fetchMonsterIndex() {
+        const select = document.getElementById("monster-select");
+        select.innerHTML = "<option>Carregando API Oficial...</option>";
+        try {
+          const res = await fetch(`${API_BASE_URL}/monsters`);
+          const data = await res.json();
+
+          if (data && data.results) {
+            allMonsters = data.results;
+            populateSelect(allMonsters);
+          } else {
+            throw new Error();
+          }
+        } catch (err) {
+          console.error("Falha ao se conectar com a API:", err);
+          select.innerHTML =
+            '<option value="">Erro ao carregar base oficial</option>';
+        }
+      }
+
+      // 2. Popula o elemento dropdown com a lista de monstros
+      function populateSelect(monsters) {
+        const select = document.getElementById("monster-select");
+        select.innerHTML = '<option value="">-- Escolha um Monstro --</option>';
+        monsters.forEach((monster) => {
+          const opt = document.createElement("option");
+          opt.value = monster.index;
+          opt.textContent = monster.name;
+          select.appendChild(opt);
+        });
+      }
+
+      // 3. Filtra a lista local de monstros baseada no campo de texto
+      function filterMonsters() {
+        const query = document
+          .getElementById("monster-search")
+          .value.toLowerCase();
+        const filtered = allMonsters.filter((m) =>
+          m.name.toLowerCase().includes(query) || m.index.toLowerCase().includes(query)
+        );
+        populateSelect(filtered);
+      }
+
+      // 4. Busca os dados de um monstro individual diretamente do JSON e mapeia os cards
+      async function loadMonsterContent(monsterIndex) {
+        try {
+          const res = await fetch(`${API_BASE_URL}/monsters/${monsterIndex}`);
+          const monster = await res.json();
+
+          // Tenta carregar a imagem padrão da API
+          if (monster.image) {
+            const fullImageUrl = `https://www.dnd5eapi.co${monster.image}`;
+            changeImage(fullImageUrl);
+            document.getElementById("art-url").value = fullImageUrl;
+          } else {
+            // Imagem padrão caso o SRD não tenha ilustração oficial deste monstro específico
+            const placeholder = "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=600";
+            changeImage(placeholder);
+            document.getElementById("art-url").value = "";
+          }
+
+          // Atributos de Habilidades e Modificadores Dinâmicos
+          const formatScore = (val) => {
+            const mod = Math.floor((val - 10) / 2);
+            const modStr = mod >= 0 ? `+${mod}` : `${mod}`;
+            return {
+              score: val,
+              mod: modStr
+            };
+          };
+
+          const abilities = {
+            STR: formatScore(monster.strength),
+            DEX: formatScore(monster.dexterity),
+            CON: formatScore(monster.constitution),
+            INT: formatScore(monster.intelligence),
+            WIS: formatScore(monster.wisdom),
+            CHA: formatScore(monster.charisma)
+          };
+
+          // Formatação das características básicas
+          const size = monster.size || "Medium";
+          const type = monster.type || "unknown";
+          const subtype = monster.subtype ? ` (${monster.subtype})` : "";
+          const alignment = monster.alignment || "any alignment";
+          const meta = `${size} ${type}${subtype}, ${alignment}`;
+
+          // Formatação inteligente da Armadura (AC)
+          let ac = "10";
+          if (monster.armor_class && monster.armor_class.length > 0) {
+            const primaryAc = monster.armor_class[0];
+            ac = primaryAc.value.toString();
+            if (primaryAc.type && primaryAc.type !== "dex") {
+              ac += ` (${primaryAc.type})`;
+            }
+          }
+
+          // Hit Points com dado de vida
+          const hp = `${monster.hit_points} (${monster.hit_points_roll})`;
+
+          // Deslocamentos (Speed)
+          const speedArr = [];
+          if (monster.speed) {
+            for (let [mode, rate] of Object.entries(monster.speed)) {
+              if (mode === 'walk') {
+                speedArr.push(rate);
+              } else {
+                speedArr.push(`${mode} ${rate}`);
+              }
+            }
+          }
+          const speed = speedArr.join(', ') || "30 ft.";
+
+          // Percepção, Idiomas e Sentidos
+          let skillList = [];
+          if (monster.proficiencies) {
+            monster.proficiencies.forEach(p => {
+              if (p.proficiency.name.startsWith("Skill:")) {
+                const skillName = p.proficiency.name.replace("Skill:", "").trim();
+                skillList.push(`${skillName} +${p.value}`);
+              }
+            });
+          }
+          
+          let sensesArr = [];
+          if (monster.senses) {
+            for (let [sense, val] of Object.entries(monster.senses)) {
+              sensesArr.push(`${sense.replace(/_/g, ' ')} ${val}`);
+            }
+          }
+
+          const skillsText = skillList.length > 0 ? `<strong>Skills:</strong> ${skillList.join(', ')}<br />` : "";
+          const sensesText = sensesArr.length > 0 ? `<strong>Senses:</strong> ${sensesArr.join(', ')}` : "<strong>Senses:</strong> Passive Perception 10";
+          
+          document.getElementById("preview-skills-senses").innerHTML = `${skillsText}${sensesText}`;
+
+          // Montagem das Seções (Traits e Actions)
+          let sections = {};
+          if (monster.special_abilities && monster.special_abilities.length > 0) {
+            sections["Traits"] = monster.special_abilities.map(a => `**${a.name}.** ${a.desc}`);
+          }
+          if (monster.actions && monster.actions.length > 0) {
+            sections["Actions"] = monster.actions.map(a => `**${a.name}.** ${a.desc}`);
+          }
+          if (monster.reactions && monster.reactions.length > 0) {
+            sections["Reactions"] = monster.reactions.map(r => `**${r.name}.** ${r.desc}`);
+          }
+
+          // Desafio (CR)
+          const cr = monster.challenge_rating !== undefined ? monster.challenge_rating.toString() : "0";
+
+          // Envia os dados para renderização final na tela
+          renderCard(monster.name, meta, ac, hp, speed, abilities, cr, sections);
+
+        } catch (err) {
+          console.error("Falha ao puxar os dados do monstro selecionado:", err);
+          alert("Não foi possível carregar as estatísticas deste monstro.");
+        }
+      }
+
+      // 5. Atualiza o DOM dos Cards
+      function renderCard(name, meta, ac, hp, speed, abilities, cr, sections) {
+        document.getElementById("preview-art-title").innerText = name.toUpperCase();
+        document.getElementById("preview-art-subtitle").innerText = meta;
+        document.getElementById("preview-stat-name").innerText = name;
+        document.getElementById("preview-stat-meta").innerText = meta;
+        document.getElementById("preview-ac").innerText = ac;
+        document.getElementById("preview-hp").innerText = hp;
+        document.getElementById("preview-speed").innerText = speed;
+        document.getElementById("preview-cr").innerText = cr;
+
+        // Atualiza a tabela de atributos no Verso
+        document.getElementById("ability-scores").innerHTML = `
+          <td><span class="ability-val">${abilities.STR.score} (${abilities.STR.mod})</span><br><span class="ability-save">Save ${abilities.STR.mod}</span></td>
+          <td><span class="ability-val">${abilities.DEX.score} (${abilities.DEX.mod})</span><br><span class="ability-save">Save ${abilities.DEX.mod}</span></td>
+          <td><span class="ability-val">${abilities.CON.score} (${abilities.CON.mod})</span><br><span class="ability-save">Save ${abilities.CON.mod}</span></td>
+          <td><span class="ability-val">${abilities.INT.score} (${abilities.INT.mod})</span><br><span class="ability-save">Save ${abilities.INT.mod}</span></td>
+          <td><span class="ability-val">${abilities.WIS.score} (${abilities.WIS.mod})</span><br><span class="ability-save">Save ${abilities.WIS.mod}</span></td>
+          <td><span class="ability-val">${abilities.CHA.score} (${abilities.CHA.mod})</span><br><span class="ability-save">Save ${abilities.CHA.mod}</span></td>
+        `;
+
+        // Limpa e reconstrói as seções descritivas (Traits, Actions, etc)
+        const details = document.getElementById("preview-details");
+        details.innerHTML = "";
+
+        for (let title in sections) {
+          const header = document.createElement("div");
+          header.className = "section-title";
+          header.innerText = title;
+          details.appendChild(header);
+
+          sections[title].forEach((text) => {
+            appendParagraph(details, text);
+          });
+        }
+      }
+
+      function appendParagraph(container, text) {
+        const p = document.createElement("div");
+        p.className = "block-text";
+        // Destaca em negrito as tags (ex: "**Bite.** Melee Weapon Attack...")
+        let formatted = text.replace(
+          /^\*\*([^*]+)\*\*/,
+          '<strong class="block-title">$1</strong>',
+        );
+        p.innerHTML = formatted;
+        container.appendChild(p);
+      }
+
+      // Helpers de Imagens e Carregamento de Arquivos Locais
+      function changeImage(url) {
+        document.getElementById("preview-art-img").src = url;
+        document.getElementById("preview-token-img").src = url;
+      }
+
+      function handleFile(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function (evt) {
+          document.getElementById("art-url").value = "";
+          changeImage(evt.target.result);
+        };
+        reader.readAsDataURL(file);
+      }
+    </script>
+  </body>
+</html>
