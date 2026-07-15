@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Gerador de Cards D&D 2024 - Crie e Imprima Cartas de Monstros 5e</title>
+    <title id="site-title-meta">Gerador de Cards D&D 2024 - Crie e Imprima Cartas de Monstros 5e</title>
     <meta name="description" content="Crie, personalize e exporte em PDF cards de monstros para D&D 5e e D&D 2024 no tamanho exato de 127mm x 88mm. Ferramenta gratuita integrada à API oficial." />
     <meta name="keywords" content="D&D 2024, D&D 5e, Card Maker, Gerador de Cards, RPG de Mesa, Monstros D&D, Imprimir Fichas, Dungeons and Dragons" />
     <link class="no-print" rel="canonical" href="https://seu-dominio.com" />
@@ -237,12 +237,13 @@
         font-size: 0.55rem;
       }
 
+      /* Badge do CR Otimizado com Ajustes de Alinhamento e Espaçamento */
       .cr-badge {
         position: absolute;
-        top: 10px;
-        right: 12px;
-        width: 28px;
-        height: 28px;
+        top: 14px;
+        right: 14px;
+        width: 32px;
+        height: 32px;
         border-radius: 50%;
         border: 2px solid #7c2d12;
         background: #fff !important;
@@ -252,19 +253,23 @@
         justify-content: center;
         font-family: "Roboto Condensed", sans-serif;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        z-index: 10;
+        padding-top: 2px; /* Move levemente o texto para baixo, compensando o alinhamento óptico */
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
       }
 
       .cr-label {
-        font-size: 0.35rem;
+        font-size: 0.4rem;
+        font-weight: bold;
         text-transform: uppercase;
         line-height: 1;
         color: #4b5563;
+        margin-bottom: -1px; /* Aproxima a etiqueta do valor fracionado */
       }
 
       .cr-value {
-        font-weight: bold;
+        font-weight: 700;
         font-size: 0.75rem;
         line-height: 1;
         color: #7c2d12;
@@ -341,46 +346,52 @@
   </head>
   <body class="p-4 md:p-8 flex flex-col min-h-screen">
     
-    <!-- HEADER & MENUS ACESSÍVEIS (SEO / UX) -->
     <header class="no-print max-w-6xl mx-auto w-full mb-6">
       <nav class="flex flex-col sm:flex-row justify-between items-center bg-neutral-900 border border-neutral-800 px-6 py-4 rounded-xl gap-4" aria-label="Navegação Principal">
         <a href="#" class="text-xl font-bold text-amber-500 font-serif tracking-wide flex items-center gap-2 hover:opacity-90" aria-label="Página Inicial do Gerador de Cards">
           <span>⚔️ Marius Cards</span>
         </a>
-        <ul class="flex gap-6 text-sm font-semibold text-neutral-400">
-          <li><a href="#como-usar" class="hover:text-amber-500 transition-colors">Como Usar</a></li>
-          <li><button onclick="openModal('modal-terms')" class="hover:text-amber-500 transition-colors">Termos de Uso</button></li>
-          <li><button onclick="openModal('modal-privacy')" class="hover:text-amber-500 transition-colors">Privacidade & Cookies</button></li>
-          <li><button onclick="openModal('modal-rights')" class="hover:text-amber-500 transition-colors">Direitos Autorais</button></li>
-        </ul>
+        
+        <div class="flex items-center gap-4 flex-wrap justify-center">
+          <ul class="flex gap-4 text-xs md:text-sm font-semibold text-neutral-400">
+            <li><a href="#como-usar" id="nav-how-to" class="hover:text-amber-500 transition-colors">Como Usar</a></li>
+            <li><button onclick="openModal('modal-terms')" id="nav-terms" class="hover:text-amber-500 transition-colors">Termos de Uso</button></li>
+            <li><button onclick="openModal('modal-privacy')" id="nav-privacy" class="hover:text-amber-500 transition-colors">Privacidade & Cookies</button></li>
+            <li><button onclick="openModal('modal-rights')" id="nav-rights" class="hover:text-amber-500 transition-colors">Direitos Autorais</button></li>
+          </ul>
+          
+          <button id="lang-switch-btn" onclick="toggleLanguage()" class="flex items-center gap-2 bg-neutral-800 hover:bg-neutral-700 border border-neutral-700 px-3 py-1.5 rounded-lg text-sm text-white font-semibold transition" aria-label="Mudar idioma / Change language">
+            🌐 <span id="current-lang-text">English</span>
+          </button>
+        </div>
       </nav>
     </header>
 
-    <!-- ÁREA PRINCIPAL DO GERADOR -->
     <main class="flex-grow">
       <div
         class="max-w-6xl mx-auto no-print bg-neutral-900 p-6 rounded-xl shadow-2xl mb-8 border border-neutral-800"
       >
         <h1
+          id="main-title"
           class="text-3xl font-extrabold text-amber-500 mb-2 flex items-center gap-2"
         >
           ⚔️ D&D 2024 Card Maker Pro (D&D 5e API)
         </h1>
-        <p class="text-neutral-400 text-sm mb-6">
+        <p id="main-subtitle" class="text-neutral-400 text-sm mb-6">
           Geração de cards no tamanho exato de
           <span class="text-white font-semibold">127mm x 88mm</span> utilizando dados oficiais direto da API Pública de D&D 5e.
         </p>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
-          <!-- 1. Escolher Criatura -->
           <div class="space-y-4">
             <h3
+              id="step-1-title"
               class="text-lg font-bold text-neutral-200 border-b border-neutral-800 pb-2"
             >
               1. Escolher Criatura
             </h3>
             <div>
-              <label class="block text-xs text-neutral-400 font-semibold mb-1" for="monster-search"
+              <label class="block text-xs text-neutral-400 font-semibold mb-1" for="monster-search" id="label-filter-name"
                 >Filtrar por nome</label
               >
               <div class="flex gap-2">
@@ -399,28 +410,28 @@
               </div>
             </div>
             <div>
-              <label class="block text-xs text-neutral-400 font-semibold mb-1" for="monster-select"
+              <label class="block text-xs text-neutral-400 font-semibold mb-1" for="monster-select" id="label-available-monsters"
                 >Monstros Disponíveis</label
               >
               <select
                 id="monster-select"
                 class="w-full bg-neutral-800 border border-neutral-700 rounded px-3 py-2 text-white text-sm focus:outline-none focus:border-amber-500 h-[38px]"
               >
-                <option value="">Carregando banco de dados...</option>
+                <option value="" id="opt-loading">Carregando banco de dados...</option>
               </select>
             </div>
           </div>
 
-          <!-- 2. Personalizar Arte & Imagem -->
           <div class="space-y-4">
             <h3
+              id="step-2-title"
               class="text-lg font-bold text-neutral-200 border-b border-neutral-800 pb-2"
             >
               2. Personalizar Arte & Imagem
             </h3>
             <div class="grid grid-cols-1 gap-3">
               <div>
-                <label class="block text-xs text-neutral-400 font-semibold mb-1" for="art-url"
+                <label class="block text-xs text-neutral-400 font-semibold mb-1" for="art-url" id="label-image-url"
                   >URL da Imagem da Frente</label
                 >
                 <input
@@ -432,7 +443,7 @@
               </div>
 
               <div>
-                <label class="block text-xs text-neutral-400 font-semibold mb-1" for="art-file"
+                <label class="block text-xs text-neutral-400 font-semibold mb-1" for="art-file" id="label-local-file"
                   >Ou usar arquivo local</label
                 >
                 <input
@@ -444,7 +455,7 @@
               </div>
             </div>
             <div>
-              <label class="block text-xs text-neutral-400 font-semibold mb-1" for="artist-name"
+              <label class="block text-xs text-neutral-400 font-semibold mb-1" for="artist-name" id="label-artist-credit"
                 >Créditos da Ilustração</label
               >
               <input
@@ -456,9 +467,9 @@
             </div>
           </div>
 
-          <!-- 3. Exportar PDF -->
           <div class="space-y-4">
             <h3
+              id="step-3-title"
               class="text-lg font-bold text-neutral-200 border-b border-neutral-800 pb-2"
             >
               3. Exportar PDF
@@ -466,11 +477,12 @@
             <div class="pt-1">
               <button
                 onclick="window.print()"
+                id="btn-print"
                 class="w-full bg-amber-500 hover:bg-amber-400 text-neutral-950 font-bold py-3 px-4 rounded-lg shadow-lg flex items-center justify-center gap-2 transition h-[48px]"
               >
                 🖨️ Salvar PDF / Imprimir
               </button>
-              <p class="text-xs text-neutral-500 mt-3 leading-relaxed">
+              <p class="text-xs text-neutral-500 mt-3 leading-relaxed" id="print-note">
                 💡 <strong>Ajuste de Imagem:</strong> Clique e arraste para cima ou para baixo diretamente sobre a arte do card para reposicionar o enquadramento perfeito antes de salvar!
               </p>
             </div>
@@ -478,18 +490,17 @@
         </div>
       </div>
 
-      <!-- CONTAINER DE PREVISÃO DOS CARDS -->
       <div
         class="print-container max-w-6xl mx-auto flex flex-col md:flex-row gap-8 justify-center items-center"
       >
         <div class="flex flex-col items-center gap-2">
           <span
             class="no-print text-xs font-semibold text-neutral-400 uppercase tracking-widest"
+            id="preview-side-a"
             >Lado A: Frente (Arte)</span
           >
           <div id="card-front" class="card-container rounded-lg overflow-hidden">
             <div class="card-art">
-              <!-- Nova imagem gratuita de Bugbear com suporte a arraste vertical -->
               <img
                 id="preview-art-img"
                 class="art-image-bg"
@@ -516,7 +527,7 @@
                     alt="Miniatura circular do Monstro"
                   />
                 </div>
-                <div class="sidebar-text">MONSTER</div>
+                <div class="sidebar-text" id="preview-sidebar-text">MONSTER</div>
                 <div class="artist-credit" id="preview-artist">
                   Art by Creative Commons
                 </div>
@@ -528,6 +539,7 @@
         <div class="flex flex-col items-center gap-2">
           <span
             class="no-print text-xs font-semibold text-neutral-400 uppercase tracking-widest"
+            id="preview-side-b"
             >Lado B: Verso (Ficha)</span
           >
           <div id="card-back" class="card-container rounded-lg overflow-hidden">
@@ -547,7 +559,7 @@
                   <strong>HP</strong> <span id="preview-hp">27 (5d8 + 5)</span>
                 </div>
                 <div class="stat-badge">
-                  <strong>Speed</strong> <span id="preview-speed">30 ft.</span>
+                  <strong id="card-label-speed">Speed</strong> <span id="preview-speed">30 ft.</span>
                 </div>
 
                 <table class="ability-table" aria-label="Tabela de Atributos de Habilidade">
@@ -633,105 +645,183 @@
         </div>
       </div>
 
-      <!-- SEÇÃO INFORMATIVA "COMO USAR" -->
       <section id="como-usar" class="no-print max-w-6xl mx-auto bg-neutral-900 border border-neutral-800 p-8 rounded-xl my-12">
-        <h2 class="text-2xl font-bold text-amber-500 mb-4 font-serif">📖 Como Usar o Gerador de Cards D&D 2024</h2>
+        <h2 class="text-2xl font-bold text-amber-500 mb-4 font-serif" id="info-section-title">📖 Como Usar o Gerador de Cards D&D 2024</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-neutral-300 text-sm leading-relaxed">
           <div class="bg-neutral-950 p-4 rounded-lg border border-neutral-800">
-            <h3 class="text-white font-bold mb-2">1. Selecione o Monstro</h3>
-            <p>Use a barra de busca para encontrar qualquer criatura integrada diretamente ao SRD oficial de D&D 5e. As informações de atributos, vida e ataques são carregadas instantaneamente.</p>
+            <h3 class="text-white font-bold mb-2" id="info-col-1-title">1. Selecione o Monstro</h3>
+            <p id="info-col-1-desc">Use a barra de busca para encontrar qualquer criatura integrada diretamente ao SRD oficial de D&D 5e. As informações de atributos, vida e ataques são carregadas instantaneamente.</p>
           </div>
           <div class="bg-neutral-950 p-4 rounded-lg border border-neutral-800">
-            <h3 class="text-white font-bold mb-2">2. Personalize e Enquadre</h3>
-            <p>Insira uma imagem via URL ou carregue uma do seu PC. Para ajustar rostos e enquadramentos cortados, basta clicar com o mouse na foto do card da frente e arrastar para cima ou para baixo.</p>
+            <h3 class="text-white font-bold mb-2" id="info-col-2-title">2. Personalize e Enquadre</h3>
+            <p id="info-col-2-desc">Insira uma imagem via URL ou carregue uma do seu PC. Para ajustar rostos e enquadramentos cortados, basta clicar com o mouse na foto do card da frente e arrastar para cima ou para baixo.</p>
           </div>
           <div class="bg-neutral-950 p-4 rounded-lg border border-neutral-800">
-            <h3 class="text-white font-bold mb-2">3. Exporte e Imprima</h3>
-            <p>Clique em imprimir e salve em PDF. O layout foi programado estritamente no formato internacional padrão de cartas de referência colecionáveis (127mm x 88mm), pronto para impressão.</p>
+            <h3 class="text-white font-bold mb-2" id="info-col-3-title">3. Exporte e Imprima</h3>
+            <p id="info-col-3-desc">Clique em imprimir e salve em PDF. O layout foi programado estritamente no formato internacional padrão de cartas de referência colecionáveis (127mm x 88mm), pronto para impressão.</p>
           </div>
         </div>
       </section>
     </main>
 
-    <!-- FOOTER (SEO / AD SENSE PRINCIPLES) -->
     <footer class="no-print bg-neutral-950 border-t border-neutral-900 py-8 px-4 text-center mt-auto">
       <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-neutral-500">
-        <p>&copy; 2026 Marius Cards. Feito de fã para fãs com o intuito de facilitar a organização de campanhas.</p>
+        <p id="footer-text">&copy; 2026 Marius Cards. Feito de fã para fãs com o intuito de facilitar a organização de campanhas.</p>
         <div class="flex flex-wrap justify-center gap-4">
-          <button onclick="openModal('modal-terms')" class="hover:text-neutral-300 underline transition-colors">Termos de Uso</button>
-          <button onclick="openModal('modal-privacy')" class="hover:text-neutral-300 underline transition-colors">Política de Privacidade</button>
-          <button onclick="openModal('modal-rights')" class="hover:text-neutral-300 underline transition-colors">Aviso de Direitos Autorais</button>
+          <button onclick="openModal('modal-terms')" id="footer-terms" class="hover:text-neutral-300 underline transition-colors">Termos de Uso</button>
+          <button onclick="openModal('modal-privacy')" id="footer-privacy" class="hover:text-neutral-300 underline transition-colors">Política de Privacidade</button>
+          <button onclick="openModal('modal-rights')" id="footer-rights" class="hover:text-neutral-300 underline transition-colors">Aviso de Direitos Autorais</button>
         </div>
       </div>
     </footer>
 
-    <!-- MODAL: TERMOS DE USO (AD SENSE COMPLIANT) -->
     <div id="modal-terms" class="no-print fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 hidden" aria-modal="true" role="dialog">
       <div class="bg-neutral-900 border border-neutral-700 w-full max-w-2xl rounded-xl p-6 shadow-2xl overflow-y-auto max-h-[85vh]">
         <div class="flex justify-between items-center border-b border-neutral-800 pb-3 mb-4">
-          <h2 class="text-xl font-bold text-amber-500 font-serif">Termos de Uso</h2>
+          <h2 class="text-xl font-bold text-amber-500 font-serif" id="modal-terms-title">Termos de Uso</h2>
           <button onclick="closeModal('modal-terms')" class="text-neutral-400 hover:text-white text-2xl font-bold" aria-label="Fechar">&times;</button>
         </div>
-        <div class="text-neutral-300 text-sm space-y-3 leading-relaxed">
+        <div class="text-neutral-300 text-sm space-y-3 leading-relaxed" id="modal-terms-body">
           <p>Ao utilizar a ferramenta <strong>Marius Cards</strong>, você concorda e aceita integralmente os seguintes termos:</p>
           <p><strong>1. Natureza do Serviço:</strong> O gerador é uma ferramenta web para formatação estética de fichas de personagens e criaturas do sistema Dungeons & Dragons (SRD D&D 5e). Trata-se de uma aplicação de uso recreativo, sem fins comerciais institucionais.</p>
           <p><strong>2. Conteúdo do Usuário:</strong> Você é totalmente responsável pelas imagens enviadas e textos inseridos manualmente ao usar a aplicação. Nós não hospedamos suas imagens locais em servidores externos; o processamento ocorre inteiramente no seu navegador.</p>
-          <p><strong>3. Alterações:</strong> Reservamos o direito de modificar ou descontinuar a ferramenta a qualquer momento, sem aviso prévio.</p>
         </div>
       </div>
     </div>
 
-    <!-- MODAL: PRIVACIDADE E COOKIES (AD SENSE EXIGÊNCIA CRÍTICA) -->
     <div id="modal-privacy" class="no-print fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 hidden" aria-modal="true" role="dialog">
       <div class="bg-neutral-900 border border-neutral-700 w-full max-w-2xl rounded-xl p-6 shadow-2xl overflow-y-auto max-h-[85vh]">
         <div class="flex justify-between items-center border-b border-neutral-800 pb-3 mb-4">
-          <h2 class="text-xl font-bold text-amber-500 font-serif">Política de Privacidade & Cookies</h2>
+          <h2 class="text-xl font-bold text-amber-500 font-serif" id="modal-privacy-title">Política de Privacidade & Cookies</h2>
           <button onclick="closeModal('modal-privacy')" class="text-neutral-400 hover:text-white text-2xl font-bold" aria-label="Fechar">&times;</button>
         </div>
-        <div class="text-neutral-300 text-sm space-y-3 leading-relaxed">
+        <div class="text-neutral-300 text-sm space-y-3 leading-relaxed" id="modal-privacy-body">
           <p>A sua privacidade é extremamente importante para nós. Esta página descreve quais dados são coletados e como os tratamos:</p>
           <p><strong>1. Processamento de Dados Locais:</strong> Todas as manipulações de imagens e estatísticas são realizadas localmente na sua máquina (Client-Side). Não salvamos, armazenamos ou transmitimos as imagens enviadas via upload para nenhum servidor.</p>
           <p><strong>2. Cookies e Anúncios (Google AdSense):</strong></p>
           <ul class="list-disc list-inside pl-2 space-y-1">
-            <li>Fornecedores terceiros, incluindo o Google, usam cookies para veicular anúncios com base em visitas anteriores dos usuários ao nosso website ou a outros websites.</li>
-            <li>Com o uso de cookies de publicidade, o Google e os parceiros dele podem veicular anúncios para os usuários com base nas visitas a este e/ou a outros sites na internet.</li>
+            <li>Fornecedores terceiros usam cookies para veicular anúncios com base em visitas anteriores.</li>
             <li>Você pode desativar a publicidade personalizada acessando as Configurações de Anúncios do Google.</li>
           </ul>
-          <p><strong>3. Analytics:</strong> Podemos coletar dados estatísticos anônimos de acesso para os fins de otimização técnica.</p>
         </div>
       </div>
     </div>
 
-    <!-- MODAL: DIREITOS AUTORAIS -->
     <div id="modal-rights" class="no-print fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 hidden" aria-modal="true" role="dialog">
       <div class="bg-neutral-900 border border-neutral-700 w-full max-w-2xl rounded-xl p-6 shadow-2xl overflow-y-auto max-h-[85vh]">
         <div class="flex justify-between items-center border-b border-neutral-800 pb-3 mb-4">
-          <h2 class="text-xl font-bold text-amber-500 font-serif">Direitos Autorais & Isenção de Responsabilidade</h2>
+          <h2 class="text-xl font-bold text-amber-500 font-serif" id="modal-rights-title">Direitos Autorais & Isenção de Responsabilidade</h2>
           <button onclick="closeModal('modal-rights')" class="text-neutral-400 hover:text-white text-2xl font-bold" aria-label="Fechar">&times;</button>
         </div>
-        <div class="text-neutral-300 text-sm space-y-3 leading-relaxed">
-          <p><strong>1. Propriedade Intelectual:</strong> "Dungeons & Dragons", "D&D", "D&D 5e", "Player's Handbook", "Dungeon Master's Guide", e as artes originais contidas nas referências de marcas comerciais registradas são propriedade intelectual da <strong>Wizards of the Coast LLC</strong>.</p>
-          <p><strong>2. Política de Conteúdo de Fãs (Fan Content Policy):</strong> Este site utiliza conteúdos obtidos via API Pública e regras contidas no Documento de Referência do Sistema (SRD). Toda a exibição é sem fins de apropriação de marca e atua em conformidade com as regras de uso livre não comercial delineadas pela Wizards of the Coast.</p>
-          <p><strong>3. Uso de Imagens:</strong> O usuário é exclusivamente responsável por inserir e imprimir links de artes protegidas por copyright de terceiros, comprometendo-se ao uso estritamente privado de tais materiais.</p>
+        <div class="text-neutral-300 text-sm space-y-3 leading-relaxed" id="modal-rights-body">
+          <p><strong>1. Propriedade Intelectual:</strong> "Dungeons & Dragons" e marcas registradas comerciais relacionadas são propriedades registradas da <strong>Wizards of the Coast LLC</strong>.</p>
+          <p><strong>2. Política de Conteúdo de Fãs (Fan Content Policy):</strong> Este site utiliza conteúdos obtidos via API Pública e regras contidas no Documento de Referência do Sistema (SRD) de forma não comercial.</p>
         </div>
       </div>
     </div>
 
-    <!-- SCRIPTS -->
     <script>
       const API_BASE_URL = "https://www.dnd5eapi.co/api";
       let allMonsters = [];
+      let currentLanguage = "pt"; // Idioma default do carregamento
 
-      // Variáveis para controle de reposicionamento (arrastar a imagem)
+      // Dicionário Estático do Layout (HTML)
+      const i18n = {
+        pt: {
+          siteTitle: "Gerador de Cards D&D 2024 - Crie e Imprima Cartas de Monstros 5e",
+          navHowTo: "Como Usar",
+          navTerms: "Termos de Uso",
+          navPrivacy: "Privacidade & Cookies",
+          navRights: "Direitos Autorais",
+          mainTitle: "⚔️ D&D 2024 Card Maker Pro (D&D 5e API)",
+          mainSubtitle: "Geração de cards no tamanho exato de <span class='text-white font-semibold'>127mm x 88mm</span> utilizando dados oficiais direto da API Pública de D&D 5e.",
+          step1Title: "1. Escolher Criatura",
+          labelFilterName: "Filtrar por nome",
+          labelAvailableMonsters: "Monstros Disponíveis",
+          step2Title: "2. Personalizar Arte & Imagem",
+          labelImageUrl: "URL da Imagem da Frente",
+          labelLocalFile: "Ou usar arquivo local",
+          labelArtistCredit: "Créditos da Ilustração",
+          step3Title: "3. Exportar PDF",
+          btnPrint: "🖨️ Salvar PDF / Imprimir",
+          printNote: "💡 <strong>Ajuste de Imagem:</strong> Clique e arraste para cima ou para baixo diretamente sobre a arte do card para reposicionar o enquadramento perfeito antes de salvar!",
+          previewSideA: "Lado A: Frente (Arte)",
+          previewSideB: "Lado B: Verso (Ficha)",
+          cardLabelSpeed: "Deslocamento",
+          infoSectionTitle: "📖 Como Usar o Gerador de Cards D&D 2024",
+          infoCol1Title: "1. Selecione o Monstro",
+          infoCol1Desc: "Use a barra de busca para encontrar qualquer criatura integrada diretamente ao SRD oficial de D&D 5e. As informações de atributos, vida e ataques são carregadas instantaneamente.",
+          infoCol2Title: "2. Personalize e Enquadre",
+          infoCol2Desc: "Insira uma imagem via URL ou carregue uma do seu PC. Para ajustar rostos e enquadramentos cortados, basta clicar com o mouse na foto do card da frente e arrastar para cima ou para baixo.",
+          infoCol3Title: "3. Exporte e Imprima",
+          infoCol3Desc: "Clique em imprimir e salve em PDF. O layout foi programado estritamente no formato internacional padrão de cartas de referência colecionáveis (127mm x 88mm), pronto para impressão.",
+          footerText: "&copy; 2026 Marius Cards. Feito de fã para fãs com o intuito de facilitar a organização de campanhas.",
+          btnLangText: "English",
+          previewSidebarText: "MONSTRO",
+          loadingText: "Carregando...",
+          traitsTitle: "Características",
+          actionsTitle: "Ações",
+          reactionsTitle: "Reações"
+        },
+        en: {
+          siteTitle: "D&D 2024 Card Maker Pro - Create and Print 5e Monster Reference Cards",
+          navHowTo: "How to Use",
+          navTerms: "Terms of Service",
+          navPrivacy: "Privacy Policy",
+          navRights: "Copyright Notice",
+          mainTitle: "⚔️ D&D 2024 Card Maker Pro (D&D 5e API)",
+          mainSubtitle: "Generate cards in the exact size of <span class='text-white font-semibold'>127mm x 88mm</span> using official data directly from the D&D 5e Public API.",
+          step1Title: "1. Select Creature",
+          labelFilterName: "Filter by name",
+          labelAvailableMonsters: "Available Monsters",
+          step2Title: "2. Customize Art & Image",
+          labelImageUrl: "Front Image URL",
+          labelLocalFile: "Or use local file",
+          labelArtistCredit: "Illustration Credits",
+          step3Title: "3. Export PDF",
+          btnPrint: "🖨️ Save PDF / Print",
+          printNote: "💡 <strong>Image Adjustment:</strong> Click and drag up or down directly on the card art to find the perfect crop before printing!",
+          previewSideA: "Side A: Front (Art)",
+          previewSideB: "Side B: Back (Stats)",
+          cardLabelSpeed: "Speed",
+          infoSectionTitle: "📖 How to Use D&D 2024 Card Maker",
+          infoCol1Title: "1. Select Monster",
+          infoCol1Desc: "Use the search bar to find any creature integrated directly into the official D&D 5e SRD. Attribute, HP, and action details load instantly.",
+          infoCol2Title: "2. Customize and Crop",
+          infoCol2Desc: "Add an image via URL or upload from your computer. To adjust cutoff heads and framing, simply click and drag vertically on the front card image.",
+          infoCol3Title: "3. Export & Print",
+          infoCol3Desc: "Click print and save to PDF. The layout is locked to the standard international size for collectible reference cards (127mm x 88mm).",
+          footerText: "&copy; 2026 Marius Cards. Made by fans for fans with the purpose of improving table-top campaigns.",
+          btnLangText: "Português",
+          previewSidebarText: "MONSTER",
+          loadingText: "Loading...",
+          traitsTitle: "Traits",
+          actionsTitle: "Actions",
+          reactionsTitle: "Reactions"
+        }
+      };
+
+      // Dicionário Estático para Termos de Regras (Para agilizar a tradução local do card)
+      const glossary = {
+        size: { "Tiny": "Minúsculo", "Small": "Pequeno", "Medium": "Médio", "Large": "Grande", "Huge": "Enorme", "Gargantuan": "Colossal" },
+        type: { "fey": "fada", "humanoid": "humanoide", "beast": "besta", "dragon": "dragão", "monstrosity": "monstruosidade", "undead": "morto-vivo", "fiend": "abissal", "celestial": "celestial", "giant": "gigante", "construct": "constructo", "elemental": "elemental", "ooze": "limo", "plant": "planta", "aberration": "aberração", "swarm of tiny beasts": "enxame de pequenas bestas" },
+        alignment: { "neutral evil": "mal neutro", "lawful evil": "mal ordeiro", "chaotic evil": "mal caótico", "lawful good": "bom ordeiro", "neutral good": "bom neutro", "chaotic good": "bom caótico", "any alignment": "qualquer alinhamento", "unaligned": "sem alinhamento", "neutral": "neutro" }
+      };
+
+      // Controle de reposicionamento (arrastar a imagem)
       let isDragging = false;
       let startY = 0;
       let currentTop = 0;
       const previewImg = document.getElementById("preview-art-img");
 
+      // Objeto temporário para guardar os dados brutos da última API consultada
+      let currentMonsterData = null;
+
       document.addEventListener("DOMContentLoaded", () => {
         fetchMonsterIndex();
         setupEvents();
         setupDragToReposition();
+        applyLanguage();
       });
 
       function setupEvents() {
@@ -771,28 +861,94 @@
         });
       }
 
-      // Sistema robusto de arrastar a imagem (Click and Drag no eixo Y)
+      // Função para alternar o idioma do site
+      function toggleLanguage() {
+        currentLanguage = currentLanguage === "pt" ? "en" : "pt";
+        applyLanguage();
+        // Se já houver um monstro carregado, re-renderiza-o no novo idioma
+        if (currentMonsterData) {
+          processAndRenderMonster(currentMonsterData);
+        }
+      }
+
+      // Aplica a tradução estática aos elementos da página
+      function applyLanguage() {
+        const t = i18n[currentLanguage];
+        document.getElementById("site-title-meta").innerText = t.siteTitle;
+        document.getElementById("nav-how-to").innerText = t.navHowTo;
+        document.getElementById("nav-terms").innerText = t.navTerms;
+        document.getElementById("nav-privacy").innerText = t.navPrivacy;
+        document.getElementById("nav-rights").innerText = t.navRights;
+        document.getElementById("main-title").innerText = t.mainTitle;
+        document.getElementById("main-subtitle").innerHTML = t.mainSubtitle;
+        
+        document.getElementById("step-1-title").innerText = t.step1Title;
+        document.getElementById("label-filter-name").innerText = t.labelFilterName;
+        document.getElementById("label-available-monsters").innerText = t.labelAvailableMonsters;
+        
+        document.getElementById("step-2-title").innerText = t.step2Title;
+        document.getElementById("label-image-url").innerText = t.labelImageUrl;
+        document.getElementById("label-local-file").innerText = t.labelLocalFile;
+        document.getElementById("label-artist-credit").innerText = t.labelArtistCredit;
+        
+        document.getElementById("step-3-title").innerText = t.step3Title;
+        document.getElementById("btn-print").innerText = t.btnPrint;
+        document.getElementById("print-note").innerHTML = t.printNote;
+
+        document.getElementById("preview-side-a").innerText = t.previewSideA;
+        document.getElementById("preview-side-b").innerText = t.previewSideB;
+        document.getElementById("card-label-speed").innerText = t.cardLabelSpeed;
+        document.getElementById("preview-sidebar-text").innerText = t.previewSidebarText;
+
+        document.getElementById("info-section-title").innerText = t.infoSectionTitle;
+        document.getElementById("info-col-1-title").innerText = t.infoCol1Title;
+        document.getElementById("info-col-1-desc").innerText = t.infoCol1Desc;
+        document.getElementById("info-col-2-title").innerText = t.infoCol2Title;
+        document.getElementById("info-col-2-desc").innerText = t.infoCol2Desc;
+        document.getElementById("info-col-3-title").innerText = t.infoCol3Title;
+        document.getElementById("info-col-3-desc").innerText = t.infoCol3Desc;
+
+        document.getElementById("footer-text").innerHTML = t.footerText;
+        document.getElementById("footer-terms").innerText = t.navTerms;
+        document.getElementById("footer-privacy").innerText = t.navPrivacy;
+        document.getElementById("footer-rights").innerText = t.navRights;
+
+        document.getElementById("current-lang-text").innerText = t.btnLangText;
+      }
+
+      // ESTRATÉGIA DE TRADUÇÃO DINÂMICA (MyMemory API - Gratuita e Sem Credenciais)
+      async function translateText(text) {
+        if (currentLanguage === "en") return text; // Sem tradução se o site estiver em inglês
+        try {
+          const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|pt`);
+          const data = await res.json();
+          if (data && data.responseData) {
+            return data.responseData.translatedText;
+          }
+          return text;
+        } catch (e) {
+          console.warn("MyMemory API falhou, usando fallback original.", e);
+          return text;
+        }
+      }
+
+      // Sistema de arrastar a imagem (Click and Drag no eixo Y)
       function setupDragToReposition() {
-        // Mouse Events
         previewImg.addEventListener("mousedown", (e) => {
           isDragging = true;
           startY = e.clientY - currentTop;
-          previewImg.style.transition = "none"; // Desliga transições durante o arraste
+          previewImg.style.transition = "none";
         });
 
         window.addEventListener("mousemove", (e) => {
           if (!isDragging) return;
           e.preventDefault();
           
-          // Calcula a nova posição baseada no movimento
           let deltaY = e.clientY - startY;
-
-          // Limita o arraste para impedir que a imagem se descole do card
-          const containerHeight = 332; // Altura aproximada do card (88mm convertidos)
+          const containerHeight = 332;
           const imgHeight = previewImg.offsetHeight;
           const maxScroll = Math.min(0, containerHeight - imgHeight);
 
-          // Restringe entre o topo máximo e o fundo máximo
           if (deltaY > 0) deltaY = 0;
           if (deltaY < maxScroll) deltaY = maxScroll;
 
@@ -804,7 +960,6 @@
           isDragging = false;
         });
 
-        // Touch Events (Suporte para celulares e tablets)
         previewImg.addEventListener("touchstart", (e) => {
           isDragging = true;
           startY = e.touches[0].clientY - currentTop;
@@ -830,35 +985,30 @@
         });
       }
 
-      // Lógica de Modais (Acessíveis)
       function openModal(modalId) {
         const modal = document.getElementById(modalId);
         modal.classList.remove("hidden");
-        document.body.style.overflow = "hidden"; // Desabilita o scroll ao fundo
+        document.body.style.overflow = "hidden";
       }
 
       function closeModal(modalId) {
         const modal = document.getElementById(modalId);
         modal.classList.add("hidden");
-        document.body.style.overflow = ""; // Reabilita o scroll
+        document.body.style.overflow = "";
       }
 
-      // Função utilitária para converter CR decimal em Fração
       function formatCR(crValue) {
         const numericCR = parseFloat(crValue);
         if (isNaN(numericCR)) return crValue;
-        
         if (numericCR === 0.125) return "1/8";
         if (numericCR === 0.25) return "1/4";
         if (numericCR === 0.5) return "1/2";
-        
         return numericCR.toString();
       }
 
-      // 1. Carrega todos os monstros da API de D&D 5e
       async function fetchMonsterIndex() {
         const select = document.getElementById("monster-select");
-        select.innerHTML = "<option>Carregando API Oficial...</option>";
+        select.innerHTML = `<option>${i18n[currentLanguage].loadingText}</option>`;
         try {
           const res = await fetch(`${API_BASE_URL}/monsters`);
           const data = await res.json();
@@ -866,20 +1016,15 @@
           if (data && data.results) {
             allMonsters = data.results;
             populateSelect(allMonsters);
-          } else {
-            throw new Error();
           }
         } catch (err) {
-          console.error("Falha ao se conectar com a API:", err);
-          select.innerHTML =
-            '<option value="">Erro ao carregar base oficial</option>';
+          console.error("Falha ao carregar API:", err);
         }
       }
 
-      // 2. Popula o elemento dropdown com a lista de monstros
       function populateSelect(monsters) {
         const select = document.getElementById("monster-select");
-        select.innerHTML = '<option value="">-- Escolha um Monstro --</option>';
+        select.innerHTML = `<option value="">-- ${currentLanguage === 'pt' ? 'Escolha o Monstro' : 'Choose a Monster'} --</option>`;
         monsters.forEach((monster) => {
           const opt = document.createElement("option");
           opt.value = monster.index;
@@ -888,28 +1033,21 @@
         });
       }
 
-      // 3. Filtra a lista local de monstros baseada no campo de texto
       function filterMonsters() {
-        const query = document
-          .getElementById("monster-search")
-          .value.toLowerCase();
+        const query = document.getElementById("monster-search").value.toLowerCase();
         const filtered = allMonsters.filter((m) =>
           m.name.toLowerCase().includes(query) || m.index.toLowerCase().includes(query)
         );
         populateSelect(filtered);
       }
 
-      // 4. Busca os dados de um monstro individual diretamente do JSON e mapeia os cards
       async function loadMonsterContent(monsterIndex) {
         try {
           const res = await fetch(`${API_BASE_URL}/monsters/${monsterIndex}`);
           const monster = await res.json();
+          currentMonsterData = monster; // Guardamos os dados crus
 
-          // Reseta a posição de arraste ao carregar um monstro novo
-          currentTop = 0;
-          previewImg.style.top = "0px";
-
-          // Tenta carregar a imagem padrão da API
+          // Define imagem padrão ou a da API
           if (monster.image) {
             const fullImageUrl = `https://www.dnd5eapi.co${monster.image}`;
             changeImage(fullImageUrl);
@@ -920,102 +1058,143 @@
             document.getElementById("art-url").value = "";
           }
 
-          // Atributos de Habilidades e Modificadores Dinâmicos
-          const formatScore = (val) => {
-            const mod = Math.floor((val - 10) / 2);
-            const modStr = mod >= 0 ? `+${mod}` : `${mod}`;
-            return {
-              score: val,
-              mod: modStr
-            };
-          };
-
-          const abilities = {
-            STR: formatScore(monster.strength),
-            DEX: formatScore(monster.dexterity),
-            CON: formatScore(monster.constitution),
-            INT: formatScore(monster.intelligence),
-            WIS: formatScore(monster.wisdom),
-            CHA: formatScore(monster.charisma)
-          };
-
-          // Formatação das características básicas
-          const size = monster.size || "Medium";
-          const type = monster.type || "unknown";
-          const subtype = monster.subtype ? ` (${monster.subtype})` : "";
-          const alignment = monster.alignment || "any alignment";
-          const meta = `${size} ${type}${subtype}, ${alignment}`;
-
-          // Formatação inteligente da Armadura (AC)
-          let ac = "10";
-          if (monster.armor_class && monster.armor_class.length > 0) {
-            const primaryAc = monster.armor_class[0];
-            ac = primaryAc.value.toString();
-            if (primaryAc.type && primaryAc.type !== "dex") {
-              ac += ` (${primaryAc.type})`;
-            }
-          }
-
-          // Hit Points com dado de vida
-          const hp = `${monster.hit_points} (${monster.hit_points_roll})`;
-
-          // Deslocamentos (Speed)
-          const speedArr = [];
-          if (monster.speed) {
-            for (let [mode, rate] of Object.entries(monster.speed)) {
-              if (mode === 'walk') {
-                speedArr.push(rate);
-              } else {
-                speedArr.push(`${mode} ${rate}`);
-              }
-            }
-          }
-          const speed = speedArr.join(', ') || "30 ft.";
-
-          // Percepção, Idiomas e Sentidos
-          let skillList = [];
-          if (monster.proficiencies) {
-            monster.proficiencies.forEach(p => {
-              if (p.proficiency.name.startsWith("Skill:")) {
-                const skillName = p.proficiency.name.replace("Skill:", "").trim();
-                skillList.push(`${skillName} +${p.value}`);
-              }
-            });
-          }
-          
-          let sensesArr = [];
-          if (monster.senses) {
-            for (let [sense, val] of Object.entries(monster.senses)) {
-              sensesArr.push(`${sense.replace(/_/g, ' ')} ${val}`);
-            }
-          }
-
-          const skillsText = skillList.length > 0 ? `<strong>Skills:</strong> ${skillList.join(', ')}<br />` : "";
-          const sensesText = sensesArr.length > 0 ? `<strong>Senses:</strong> ${sensesArr.join(', ')}` : "<strong>Senses:</strong> Passive Perception 10";
-          
-          document.getElementById("preview-skills-senses").innerHTML = `${skillsText}${sensesText}`;
-
-          // Montagem das Seções (Traits e Actions)
-          let sections = {};
-          if (monster.special_abilities && monster.special_abilities.length > 0) {
-            sections["Traits"] = monster.special_abilities.map(a => `**${a.name}.** ${a.desc}`);
-          }
-          if (monster.actions && monster.actions.length > 0) {
-            sections["Actions"] = monster.actions.map(a => `**${a.name}.** ${a.desc}`);
-          }
-          if (monster.reactions && monster.reactions.length > 0) {
-            sections["Reactions"] = monster.reactions.map(r => `**${r.name}.** ${r.desc}`);
-          }
-
-          const rawCr = monster.challenge_rating !== undefined ? monster.challenge_rating : 0;
-          const cr = formatCR(rawCr);
-
-          renderCard(monster.name, meta, ac, hp, speed, abilities, cr, sections);
-
+          await processAndRenderMonster(monster);
         } catch (err) {
-          console.error("Falha ao puxar os dados do monstro selecionado:", err);
-          alert("Não foi possível carregar as estatísticas deste monstro.");
+          console.error("Falha ao puxar os dados do monstro:", err);
         }
+      }
+
+      // PROCESSADOR E TRADUTOR DINÂMICO DOS METADADOS DO CARD
+      async function processAndRenderMonster(monster) {
+        const formatScore = (val) => {
+          const mod = Math.floor((val - 10) / 2);
+          const modStr = mod >= 0 ? `+${mod}` : `${mod}`;
+          return { score: val, mod: modStr };
+        };
+
+        const abilities = {
+          STR: formatScore(monster.strength),
+          DEX: formatScore(monster.dexterity),
+          CON: formatScore(monster.constitution),
+          INT: formatScore(monster.intelligence),
+          WIS: formatScore(monster.wisdom),
+          CHA: formatScore(monster.charisma)
+        };
+
+        // Tratamento dos Metadados (Tamanho, Tipo, Alinhamento) com Dicionário Local
+        let size = monster.size || "Medium";
+        let type = monster.type || "unknown";
+        let alignment = monster.alignment || "any alignment";
+
+        if (currentLanguage === "pt") {
+          size = glossary.size[size] || size;
+          type = glossary.type[type.toLowerCase()] || type;
+          alignment = glossary.alignment[alignment.toLowerCase()] || alignment;
+        }
+
+        const subtype = monster.subtype ? ` (${monster.subtype})` : "";
+        const meta = `${size} ${type}${subtype}, ${alignment}`;
+
+        // Classe de Armadura (AC)
+        let ac = "10";
+        if (monster.armor_class && monster.armor_class.length > 0) {
+          const primaryAc = monster.armor_class[0];
+          ac = primaryAc.value.toString();
+          if (primaryAc.type && primaryAc.type !== "dex") {
+            let acType = primaryAc.type;
+            if (currentLanguage === "pt") {
+              acType = acType.replace("shield", "Escudo").replace("leather", "Couro").replace("armor", "Armadura").replace("natural", "Natural");
+            }
+            ac += ` (${acType})`;
+          }
+        }
+
+        const hp = `${monster.hit_points} (${monster.hit_points_roll})`;
+
+        // Velocidade (Speed)
+        const speedArr = [];
+        if (monster.speed) {
+          for (let [mode, rate] of Object.entries(monster.speed)) {
+            let modeText = mode;
+            if (currentLanguage === "pt") {
+              modeText = modeText.replace("walk", "terrestre").replace("fly", "voo").replace("swim", "natação").replace("climb", "escalada").replace("burrow", "escavação");
+            }
+            if (mode === 'walk' && currentLanguage === 'en') {
+              speedArr.push(rate);
+            } else {
+              speedArr.push(`${modeText} ${rate}`);
+            }
+          }
+        }
+        const speed = speedArr.join(', ') || "30 ft.";
+
+        // Perícias (Skills)
+        let skillList = [];
+        if (monster.proficiencies) {
+          monster.proficiencies.forEach(p => {
+            if (p.proficiency.name.startsWith("Skill:")) {
+              let skillName = p.proficiency.name.replace("Skill:", "").trim();
+              if (currentLanguage === "pt") {
+                // Pequeno mapeamento local das perícias mais comuns
+                const skillsDict = { "Stealth": "Furtividade", "Survival": "Sobrevivência", "Perception": "Percepção", "Athletics": "Atletismo", "Acrobatics": "Acrobacia", "History": "História", "Insight": "Intuição", "Intimidation": "Intimidação", "Investigation": "Investigação", "Medicine": "Medicina", "Nature": "Natureza", "Religion": "Religião", "Sleight of Hand": "Prestidigitação" };
+                skillName = skillsDict[skillName] || skillName;
+              }
+              skillList.push(`${skillName} +${p.value}`);
+            }
+          });
+        }
+        
+        // Sentidos (Senses)
+        let sensesArr = [];
+        if (monster.senses) {
+          for (let [sense, val] of Object.entries(monster.senses)) {
+            let senseName = sense.replace(/_/g, ' ');
+            if (currentLanguage === "pt") {
+              senseName = senseName.replace("darkvision", "Visão no Escuro").replace("passive perception", "Percepção Passiva").replace("blindsight", "Sentido Cego").replace("tremorsense", "Sentido Sísmico").replace("truesight", "Visão Verdadeira");
+            }
+            sensesArr.push(`${senseName} ${val}`);
+          }
+        }
+
+        const labelSkills = currentLanguage === "pt" ? "Perícias" : "Skills";
+        const labelSenses = currentLanguage === "pt" ? "Sentidos" : "Senses";
+        const skillsText = skillList.length > 0 ? `<strong>${labelSkills}:</strong> ${skillList.join(', ')}<br />` : "";
+        const sensesText = sensesArr.length > 0 ? `<strong>${labelSenses}:</strong> ${sensesArr.join(', ')}` : `<strong>${labelSenses}:</strong> Passive Perception 10`;
+        
+        document.getElementById("preview-skills-senses").innerHTML = `${skillsText}${sensesText}`;
+
+        // Montagem e Tradução Dinâmica das Características (Traits e Actions)
+        let sections = {};
+        const labels = i18n[currentLanguage];
+
+        if (monster.special_abilities && monster.special_abilities.length > 0) {
+          const translatedTraits = await Promise.all(monster.special_abilities.map(async (a) => {
+            const translatedDesc = await translateText(a.desc);
+            return `**${a.name}.** ${translatedDesc}`;
+          }));
+          sections[labels.traitsTitle] = translatedTraits;
+        }
+
+        if (monster.actions && monster.actions.length > 0) {
+          const translatedActions = await Promise.all(monster.actions.map(async (a) => {
+            const translatedDesc = await translateText(a.desc);
+            return `**${a.name}.** ${translatedDesc}`;
+          }));
+          sections[labels.actionsTitle] = translatedActions;
+        }
+
+        if (monster.reactions && monster.reactions.length > 0) {
+          const translatedReactions = await Promise.all(monster.reactions.map(async (r) => {
+            const translatedDesc = await translateText(r.desc);
+            return `**${r.name}.** ${translatedDesc}`;
+          }));
+          sections[labels.reactionsTitle] = translatedReactions;
+        }
+
+        const rawCr = monster.challenge_rating !== undefined ? monster.challenge_rating : 0;
+        const cr = formatCR(rawCr);
+
+        renderCard(monster.name, meta, ac, hp, speed, abilities, cr, sections);
       }
 
       // 5. Atualiza o DOM dos Cards
@@ -1027,14 +1206,21 @@
         document.getElementById("preview-ac").innerText = ac;
         document.getElementById("preview-hp").innerText = hp;
         document.getElementById("preview-speed").innerText = speed;
-        document.getElementById("preview-cr").innerText = cr;
+        
+        const crValueEl = document.querySelector(".cr-value");
+        crValueEl.innerText = cr;
+        
+        if (cr.includes("/")) {
+          crValueEl.style.fontSize = "0.7rem";
+        } else {
+          crValueEl.style.fontSize = "0.8rem";
+        }
 
         // --- CÁLCULO DINÂMICO DA INICIATIVA (D&D 2024) ---
         const dexMod = parseInt(abilities.DEX.mod);
         const initBonus = dexMod >= 0 ? `+${dexMod}` : `${dexMod}`;
         const initPassive = 10 + dexMod;
         document.getElementById("preview-init").innerText = `${initBonus} (${initPassive})`;
-        // -------------------------------------------------
 
         // Atualiza a tabela de atributos no Verso
         document.getElementById("ability-scores").innerHTML = `
@@ -1075,8 +1261,6 @@
       function changeImage(url) {
         document.getElementById("preview-art-img").src = url;
         document.getElementById("preview-token-img").src = url;
-        
-        // Reseta o offset no carregamento de uma nova url manual
         currentTop = 0;
         previewImg.style.top = "0px";
       }
