@@ -161,6 +161,7 @@
 
       /* CARD DE ATRIBUTOS (VERSO) */
       .card-stats {
+        position: relative; /* Contexto de posicionamento absoluto do badge do CR */
         padding: 10px 12px;
         background-color: #fcf8f2 !important;
         background-image: radial-gradient(
@@ -237,13 +238,13 @@
         font-size: 0.55rem;
       }
 
-      /* Badge do CR Otimizado com Ajustes de Alinhamento e Espaçamento */
+      /* Badge do CR Perfeitamente Alinhado e Redimensionado */
       .cr-badge {
         position: absolute;
-        top: 14px;
-        right: 14px;
-        width: 32px;
-        height: 32px;
+        top: 6px;
+        right: 6px;
+        width: 28px;
+        height: 28px;
         border-radius: 50%;
         border: 2px solid #7c2d12;
         background: #fff !important;
@@ -254,32 +255,34 @@
         font-family: "Roboto Condensed", sans-serif;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
         z-index: 10;
-        padding-top: 2px; /* Move levemente o texto para baixo, compensando o alinhamento óptico */
+        padding-top: 1px;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
       }
 
       .cr-label {
-        font-size: 0.4rem;
+        font-size: 0.35rem;
         font-weight: bold;
         text-transform: uppercase;
         line-height: 1;
         color: #4b5563;
-        margin-bottom: -1px; /* Aproxima a etiqueta do valor fracionado */
+        margin-bottom: -1px;
       }
 
       .cr-value {
         font-weight: 700;
-        font-size: 0.75rem;
+        font-size: 0.65rem;
         line-height: 1;
         color: #7c2d12;
       }
 
+      /* Detalhes com margem superior para evitar sobreposição */
       .details-section {
         font-size: 0.65rem;
         line-height: 1.15;
         overflow-y: auto;
-        max-height: 235px;
+        max-height: 220px; /* Reduzido de 235px para compensar o padding-top */
+        padding-top: 20px; /* Garante que o texto comece abaixo da altura do CR Badge */
         padding-right: 2px;
       }
 
@@ -346,12 +349,14 @@
   </head>
   <body class="p-4 md:p-8 flex flex-col min-h-screen">
     
+    <!-- HEADER & MENUS ACESSÍVEIS (SEO / UX) -->
     <header class="no-print max-w-6xl mx-auto w-full mb-6">
       <nav class="flex flex-col sm:flex-row justify-between items-center bg-neutral-900 border border-neutral-800 px-6 py-4 rounded-xl gap-4" aria-label="Navegação Principal">
         <a href="#" class="text-xl font-bold text-amber-500 font-serif tracking-wide flex items-center gap-2 hover:opacity-90" aria-label="Página Inicial do Gerador de Cards">
           <span>⚔️ Marius Cards</span>
         </a>
         
+        <!-- Botoes e Seletor de Idioma -->
         <div class="flex items-center gap-4 flex-wrap justify-center">
           <ul class="flex gap-4 text-xs md:text-sm font-semibold text-neutral-400">
             <li><a href="#como-usar" id="nav-how-to" class="hover:text-amber-500 transition-colors">Como Usar</a></li>
@@ -360,6 +365,7 @@
             <li><button onclick="openModal('modal-rights')" id="nav-rights" class="hover:text-amber-500 transition-colors">Direitos Autorais</button></li>
           </ul>
           
+          <!-- Seletor Ativo de Idioma -->
           <button id="lang-switch-btn" onclick="toggleLanguage()" class="flex items-center gap-2 bg-neutral-800 hover:bg-neutral-700 border border-neutral-700 px-3 py-1.5 rounded-lg text-sm text-white font-semibold transition" aria-label="Mudar idioma / Change language">
             🌐 <span id="current-lang-text">English</span>
           </button>
@@ -367,6 +373,7 @@
       </nav>
     </header>
 
+    <!-- ÁREA PRINCIPAL DO GERADOR -->
     <main class="flex-grow">
       <div
         class="max-w-6xl mx-auto no-print bg-neutral-900 p-6 rounded-xl shadow-2xl mb-8 border border-neutral-800"
@@ -383,6 +390,7 @@
         </p>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
+          <!-- 1. Escolher Criatura -->
           <div class="space-y-4">
             <h3
               id="step-1-title"
@@ -422,6 +430,7 @@
             </div>
           </div>
 
+          <!-- 2. Personalizar Arte & Imagem -->
           <div class="space-y-4">
             <h3
               id="step-2-title"
@@ -467,6 +476,7 @@
             </div>
           </div>
 
+          <!-- 3. Exportar PDF -->
           <div class="space-y-4">
             <h3
               id="step-3-title"
@@ -490,6 +500,7 @@
         </div>
       </div>
 
+      <!-- CONTAINER DE PREVISÃO DOS CARDS -->
       <div
         class="print-container max-w-6xl mx-auto flex flex-col md:flex-row gap-8 justify-center items-center"
       >
@@ -636,6 +647,7 @@
                 </div>
               </div>
 
+              <!-- Posicionado perfeitamente no canto e isolado do fluxo de texto -->
               <div class="cr-badge">
                 <span class="cr-label">CR</span>
                 <span class="cr-value" id="preview-cr">1</span>
@@ -645,6 +657,7 @@
         </div>
       </div>
 
+      <!-- SEÇÃO INFORMATIVA "COMO USAR" -->
       <section id="como-usar" class="no-print max-w-6xl mx-auto bg-neutral-900 border border-neutral-800 p-8 rounded-xl my-12">
         <h2 class="text-2xl font-bold text-amber-500 mb-4 font-serif" id="info-section-title">📖 Como Usar o Gerador de Cards D&D 2024</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-neutral-300 text-sm leading-relaxed">
@@ -664,6 +677,7 @@
       </section>
     </main>
 
+    <!-- FOOTER (SEO / AD SENSE PRINCIPLES) -->
     <footer class="no-print bg-neutral-950 border-t border-neutral-900 py-8 px-4 text-center mt-auto">
       <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-neutral-500">
         <p id="footer-text">&copy; 2026 Marius Cards. Feito de fã para fãs com o intuito de facilitar a organização de campanhas.</p>
@@ -675,6 +689,7 @@
       </div>
     </footer>
 
+    <!-- MODAL: TERMOS DE USO -->
     <div id="modal-terms" class="no-print fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 hidden" aria-modal="true" role="dialog">
       <div class="bg-neutral-900 border border-neutral-700 w-full max-w-2xl rounded-xl p-6 shadow-2xl overflow-y-auto max-h-[85vh]">
         <div class="flex justify-between items-center border-b border-neutral-800 pb-3 mb-4">
@@ -689,6 +704,7 @@
       </div>
     </div>
 
+    <!-- MODAL: PRIVACIDADE E COOKIES -->
     <div id="modal-privacy" class="no-print fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 hidden" aria-modal="true" role="dialog">
       <div class="bg-neutral-900 border border-neutral-700 w-full max-w-2xl rounded-xl p-6 shadow-2xl overflow-y-auto max-h-[85vh]">
         <div class="flex justify-between items-center border-b border-neutral-800 pb-3 mb-4">
@@ -707,6 +723,7 @@
       </div>
     </div>
 
+    <!-- MODAL: DIREITOS AUTORAIS -->
     <div id="modal-rights" class="no-print fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 hidden" aria-modal="true" role="dialog">
       <div class="bg-neutral-900 border border-neutral-700 w-full max-w-2xl rounded-xl p-6 shadow-2xl overflow-y-auto max-h-[85vh]">
         <div class="flex justify-between items-center border-b border-neutral-800 pb-3 mb-4">
@@ -720,6 +737,7 @@
       </div>
     </div>
 
+    <!-- SCRIPTS -->
     <script>
       const API_BASE_URL = "https://www.dnd5eapi.co/api";
       let allMonsters = [];
@@ -801,7 +819,7 @@
         }
       };
 
-      // Dicionário Estático para Termos de Regras (Para agilizar a tradução local do card)
+      // Dicionário para Termos de Regras
       const glossary = {
         size: { "Tiny": "Minúsculo", "Small": "Pequeno", "Medium": "Médio", "Large": "Grande", "Huge": "Enorme", "Gargantuan": "Colossal" },
         type: { "fey": "fada", "humanoid": "humanoide", "beast": "besta", "dragon": "dragão", "monstrosity": "monstruosidade", "undead": "morto-vivo", "fiend": "abissal", "celestial": "celestial", "giant": "gigante", "construct": "constructo", "elemental": "elemental", "ooze": "limo", "plant": "planta", "aberration": "aberração", "swarm of tiny beasts": "enxame de pequenas bestas" },
@@ -814,7 +832,6 @@
       let currentTop = 0;
       const previewImg = document.getElementById("preview-art-img");
 
-      // Objeto temporário para guardar os dados brutos da última API consultada
       let currentMonsterData = null;
 
       document.addEventListener("DOMContentLoaded", () => {
@@ -861,17 +878,14 @@
         });
       }
 
-      // Função para alternar o idioma do site
       function toggleLanguage() {
         currentLanguage = currentLanguage === "pt" ? "en" : "pt";
         applyLanguage();
-        // Se já houver um monstro carregado, re-renderiza-o no novo idioma
         if (currentMonsterData) {
           processAndRenderMonster(currentMonsterData);
         }
       }
 
-      // Aplica a tradução estática aos elementos da página
       function applyLanguage() {
         const t = i18n[currentLanguage];
         document.getElementById("site-title-meta").innerText = t.siteTitle;
@@ -916,9 +930,8 @@
         document.getElementById("current-lang-text").innerText = t.btnLangText;
       }
 
-      // ESTRATÉGIA DE TRADUÇÃO DINÂMICA (MyMemory API - Gratuita e Sem Credenciais)
       async function translateText(text) {
-        if (currentLanguage === "en") return text; // Sem tradução se o site estiver em inglês
+        if (currentLanguage === "en") return text;
         try {
           const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|pt`);
           const data = await res.json();
@@ -932,7 +945,6 @@
         }
       }
 
-      // Sistema de arrastar a imagem (Click and Drag no eixo Y)
       function setupDragToReposition() {
         previewImg.addEventListener("mousedown", (e) => {
           isDragging = true;
@@ -1045,9 +1057,8 @@
         try {
           const res = await fetch(`${API_BASE_URL}/monsters/${monsterIndex}`);
           const monster = await res.json();
-          currentMonsterData = monster; // Guardamos os dados crus
+          currentMonsterData = monster;
 
-          // Define imagem padrão ou a da API
           if (monster.image) {
             const fullImageUrl = `https://www.dnd5eapi.co${monster.image}`;
             changeImage(fullImageUrl);
@@ -1064,7 +1075,6 @@
         }
       }
 
-      // PROCESSADOR E TRADUTOR DINÂMICO DOS METADADOS DO CARD
       async function processAndRenderMonster(monster) {
         const formatScore = (val) => {
           const mod = Math.floor((val - 10) / 2);
@@ -1081,7 +1091,6 @@
           CHA: formatScore(monster.charisma)
         };
 
-        // Tratamento dos Metadados (Tamanho, Tipo, Alinhamento) com Dicionário Local
         let size = monster.size || "Medium";
         let type = monster.type || "unknown";
         let alignment = monster.alignment || "any alignment";
@@ -1095,7 +1104,6 @@
         const subtype = monster.subtype ? ` (${monster.subtype})` : "";
         const meta = `${size} ${type}${subtype}, ${alignment}`;
 
-        // Classe de Armadura (AC)
         let ac = "10";
         if (monster.armor_class && monster.armor_class.length > 0) {
           const primaryAc = monster.armor_class[0];
@@ -1111,7 +1119,6 @@
 
         const hp = `${monster.hit_points} (${monster.hit_points_roll})`;
 
-        // Velocidade (Speed)
         const speedArr = [];
         if (monster.speed) {
           for (let [mode, rate] of Object.entries(monster.speed)) {
@@ -1128,14 +1135,12 @@
         }
         const speed = speedArr.join(', ') || "30 ft.";
 
-        // Perícias (Skills)
         let skillList = [];
         if (monster.proficiencies) {
           monster.proficiencies.forEach(p => {
             if (p.proficiency.name.startsWith("Skill:")) {
               let skillName = p.proficiency.name.replace("Skill:", "").trim();
               if (currentLanguage === "pt") {
-                // Pequeno mapeamento local das perícias mais comuns
                 const skillsDict = { "Stealth": "Furtividade", "Survival": "Sobrevivência", "Perception": "Percepção", "Athletics": "Atletismo", "Acrobatics": "Acrobacia", "History": "História", "Insight": "Intuição", "Intimidation": "Intimidação", "Investigation": "Investigação", "Medicine": "Medicina", "Nature": "Natureza", "Religion": "Religião", "Sleight of Hand": "Prestidigitação" };
                 skillName = skillsDict[skillName] || skillName;
               }
@@ -1144,7 +1149,6 @@
           });
         }
         
-        // Sentidos (Senses)
         let sensesArr = [];
         if (monster.senses) {
           for (let [sense, val] of Object.entries(monster.senses)) {
@@ -1163,7 +1167,6 @@
         
         document.getElementById("preview-skills-senses").innerHTML = `${skillsText}${sensesText}`;
 
-        // Montagem e Tradução Dinâmica das Características (Traits e Actions)
         let sections = {};
         const labels = i18n[currentLanguage];
 
@@ -1197,7 +1200,6 @@
         renderCard(monster.name, meta, ac, hp, speed, abilities, cr, sections);
       }
 
-      // 5. Atualiza o DOM dos Cards
       function renderCard(name, meta, ac, hp, speed, abilities, cr, sections) {
         document.getElementById("preview-art-title").innerText = name.toUpperCase();
         document.getElementById("preview-art-subtitle").innerText = meta;
@@ -1210,13 +1212,14 @@
         const crValueEl = document.querySelector(".cr-value");
         crValueEl.innerText = cr;
         
+        // Ajusta a escala da fonte no círculo do CR menor de 28px
         if (cr.includes("/")) {
-          crValueEl.style.fontSize = "0.7rem";
+          crValueEl.style.fontSize = "0.55rem";
         } else {
-          crValueEl.style.fontSize = "0.8rem";
+          crValueEl.style.fontSize = "0.65rem";
         }
 
-        // --- CÁLCULO DINÂMICO DA INICIATIVA (D&D 2024) ---
+        // --- CÁLCULO DINÂMICO DA INICIATIVA ---
         const dexMod = parseInt(abilities.DEX.mod);
         const initBonus = dexMod >= 0 ? `+${dexMod}` : `${dexMod}`;
         const initPassive = 10 + dexMod;
@@ -1261,6 +1264,7 @@
       function changeImage(url) {
         document.getElementById("preview-art-img").src = url;
         document.getElementById("preview-token-img").src = url;
+        
         currentTop = 0;
         previewImg.style.top = "0px";
       }
