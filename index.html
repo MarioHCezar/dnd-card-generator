@@ -6,7 +6,7 @@
     <title>Gerador de Cards D&D 2024 - Crie e Imprima Cartas de Monstros 5e</title>
     <meta name="description" content="Crie, personalize e exporte em PDF cards de monstros para D&D 5e e D&D 2024 no tamanho exato de 127mm x 88mm. Ferramenta gratuita integrada à API oficial." />
     <meta name="keywords" content="D&D 2024, D&D 5e, Card Maker, Gerador de Cards, RPG de Mesa, Monstros D&D, Imprimir Fichas, Dungeons and Dragons" />
-    <link rel="canonical" href="https://seu-dominio.com" />
+    <link class="no-print" rel="canonical" href="https://seu-dominio.com" />
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
       /* Fontes de fantasia e RPG */
@@ -46,17 +46,24 @@
         position: relative;
         background-color: #1a1a1a;
         overflow: hidden;
+        user-select: none;
       }
 
-      /* Tag img real para garantir renderização perfeita no PDF */
+      /* Tag img real para garantir renderização perfeita no PDF com controle de arraste */
       .art-image-bg {
         width: 100%;
-        height: 100%;
+        height: auto;
+        min-height: 100%;
         object-fit: cover;
         position: absolute;
         top: 0;
         left: 0;
         z-index: 1;
+        cursor: grab;
+      }
+      
+      .art-image-bg:active {
+        cursor: grabbing;
       }
 
       .art-overlay {
@@ -77,6 +84,7 @@
         justify-content: flex-end;
         height: 60%;
         z-index: 2;
+        pointer-events: none; /* Permite arrastar mesmo clicando em cima do texto */
       }
 
       .art-title {
@@ -333,6 +341,7 @@
   </head>
   <body class="p-4 md:p-8 flex flex-col min-h-screen">
     
+    <!-- HEADER & MENUS ACESSÍVEIS (SEO / UX) -->
     <header class="no-print max-w-6xl mx-auto w-full mb-6">
       <nav class="flex flex-col sm:flex-row justify-between items-center bg-neutral-900 border border-neutral-800 px-6 py-4 rounded-xl gap-4" aria-label="Navegação Principal">
         <a href="#" class="text-xl font-bold text-amber-500 font-serif tracking-wide flex items-center gap-2 hover:opacity-90" aria-label="Página Inicial do Gerador de Cards">
@@ -347,6 +356,7 @@
       </nav>
     </header>
 
+    <!-- ÁREA PRINCIPAL DO GERADOR -->
     <main class="flex-grow">
       <div
         class="max-w-6xl mx-auto no-print bg-neutral-900 p-6 rounded-xl shadow-2xl mb-8 border border-neutral-800"
@@ -362,6 +372,7 @@
         </p>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
+          <!-- 1. Escolher Criatura -->
           <div class="space-y-4">
             <h3
               class="text-lg font-bold text-neutral-200 border-b border-neutral-800 pb-2"
@@ -400,6 +411,7 @@
             </div>
           </div>
 
+          <!-- 2. Personalizar Arte & Imagem -->
           <div class="space-y-4">
             <h3
               class="text-lg font-bold text-neutral-200 border-b border-neutral-800 pb-2"
@@ -438,12 +450,13 @@
               <input
                 type="text"
                 id="artist-name"
-                value="Wizards of the Coast"
+                value="Creative Commons"
                 class="w-full bg-neutral-800 border border-neutral-700 rounded px-3 py-2 text-white focus:outline-none focus:border-amber-500 text-sm"
               />
             </div>
           </div>
 
+          <!-- 3. Exportar PDF -->
           <div class="space-y-4">
             <h3
               class="text-lg font-bold text-neutral-200 border-b border-neutral-800 pb-2"
@@ -458,13 +471,14 @@
                 🖨️ Salvar PDF / Imprimir
               </button>
               <p class="text-xs text-neutral-500 mt-3 leading-relaxed">
-                💡 <strong>Nota Importante:</strong> Na tela de impressão, lembre-se de marcar a opção <strong>"Gráficos de segundo plano"</strong> ou <strong>"Background graphics"</strong> nas configurações para que as texturas e cores de fundo apareçam no PDF.
+                💡 <strong>Ajuste de Imagem:</strong> Clique e arraste para cima ou para baixo diretamente sobre a arte do card para reposicionar o enquadramento perfeito antes de salvar!
               </p>
             </div>
           </div>
         </div>
       </div>
 
+      <!-- CONTAINER DE PREVISÃO DOS CARDS -->
       <div
         class="print-container max-w-6xl mx-auto flex flex-col md:flex-row gap-8 justify-center items-center"
       >
@@ -475,11 +489,13 @@
           >
           <div id="card-front" class="card-container rounded-lg overflow-hidden">
             <div class="card-art">
+              <!-- Nova imagem gratuita de Bugbear com suporte a arraste vertical -->
               <img
                 id="preview-art-img"
                 class="art-image-bg"
-                src="https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=600"
+                src="https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?q=80&w=1000"
                 alt="Ilustração do Monstro selecionado"
+                draggable="false"
               />
 
               <div class="art-overlay">
@@ -487,7 +503,7 @@
                   BUGBEAR WARRIOR
                 </div>
                 <div class="art-subtitle" id="preview-art-subtitle">
-                  Lurking Goblinoid Brute
+                  Medium Fey (Goblinoid), Neutral Evil
                 </div>
               </div>
 
@@ -496,13 +512,13 @@
                   <img
                     id="preview-token-img"
                     class="token-image"
-                    src="https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=150"
+                    src="https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?q=80&w=150"
                     alt="Miniatura circular do Monstro"
                   />
                 </div>
                 <div class="sidebar-text">MONSTER</div>
                 <div class="artist-credit" id="preview-artist">
-                  Art by Wizards of the Coast
+                  Art by Creative Commons
                 </div>
               </div>
             </div>
@@ -522,12 +538,13 @@
                     Bugbear Warrior
                   </div>
                   <div class="monster-meta" id="preview-stat-meta">
-                    Medium Fey (Goblinoid)
+                    Medium Fey (Goblinoid), Neutral Evil
                   </div>
                 </div>
                 <div class="stat-badge">
-                  <strong>AC</strong> <span id="preview-ac">14</span> |
-                  <strong>HP</strong> <span id="preview-hp">33</span>
+                  <strong>AC</strong> <span id="preview-ac">16 (Hide Armor, Shield)</span> |
+                  <strong>Initiative</strong> <span id="preview-init">+2 (12)</span> |
+                  <strong>HP</strong> <span id="preview-hp">27 (5d8 + 5)</span>
                 </div>
                 <div class="stat-badge">
                   <strong>Speed</strong> <span id="preview-speed">30 ft.</span>
@@ -588,22 +605,22 @@
 
                 <div class="stat-badge mt-2" id="preview-skills-senses">
                   <strong>Skills:</strong> Stealth +6, Survival +2<br />
-                  <strong>Senses:</strong> Darkvision 60 ft.
+                  <strong>Senses:</strong> Darkvision 60 ft., Passive Perception 10
                 </div>
               </div>
 
               <div class="details-section" id="preview-details">
                 <div class="section-title">Traits</div>
                 <div class="block-text">
-                  <strong>Abduct.</strong> The bugbear needn't spend extra
-                  movement to move a creature it is grappling.
+                  <strong>Brute.</strong> A melee weapon deals one extra die of its damage when the bugbear hits with it.
+                </div>
+                <div class="block-text">
+                  <strong>Surprise Attack.</strong> If the bugbear surprises a creature and hits it with an attack during the first round of combat, the target takes an extra 2d6 damage.
                 </div>
 
                 <div class="section-title">Actions</div>
                 <div class="block-text">
-                  <strong>Light Hammer.</strong> Melee or Ranged Weapon Attack: +4
-                  to hit, reach 5 ft. or range 20/60 ft., one target. Hit: 4 (1d4
-                  + 2) bludgeoning damage.
+                  <strong>Morningstar.</strong> Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 11 (2d8 + 2) piercing damage.
                 </div>
               </div>
 
@@ -616,6 +633,7 @@
         </div>
       </div>
 
+      <!-- SEÇÃO INFORMATIVA "COMO USAR" -->
       <section id="como-usar" class="no-print max-w-6xl mx-auto bg-neutral-900 border border-neutral-800 p-8 rounded-xl my-12">
         <h2 class="text-2xl font-bold text-amber-500 mb-4 font-serif">📖 Como Usar o Gerador de Cards D&D 2024</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-neutral-300 text-sm leading-relaxed">
@@ -624,8 +642,8 @@
             <p>Use a barra de busca para encontrar qualquer criatura integrada diretamente ao SRD oficial de D&D 5e. As informações de atributos, vida e ataques são carregadas instantaneamente.</p>
           </div>
           <div class="bg-neutral-950 p-4 rounded-lg border border-neutral-800">
-            <h3 class="text-white font-bold mb-2">2. Personalize a Arte</h3>
-            <p>Insira a URL de uma imagem da internet para ilustrar o seu card ou carregue um arquivo direto do seu dispositivo. Você também pode atribuir os devidos créditos de autoria ao ilustrador.</p>
+            <h3 class="text-white font-bold mb-2">2. Personalize e Enquadre</h3>
+            <p>Insira uma imagem via URL ou carregue uma do seu PC. Para ajustar rostos e enquadramentos cortados, basta clicar com o mouse na foto do card da frente e arrastar para cima ou para baixo.</p>
           </div>
           <div class="bg-neutral-950 p-4 rounded-lg border border-neutral-800">
             <h3 class="text-white font-bold mb-2">3. Exporte e Imprima</h3>
@@ -635,6 +653,7 @@
       </section>
     </main>
 
+    <!-- FOOTER (SEO / AD SENSE PRINCIPLES) -->
     <footer class="no-print bg-neutral-950 border-t border-neutral-900 py-8 px-4 text-center mt-auto">
       <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-neutral-500">
         <p>&copy; 2026 Marius Cards. Feito de fã para fãs com o intuito de facilitar a organização de campanhas.</p>
@@ -646,6 +665,7 @@
       </div>
     </footer>
 
+    <!-- MODAL: TERMOS DE USO (AD SENSE COMPLIANT) -->
     <div id="modal-terms" class="no-print fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 hidden" aria-modal="true" role="dialog">
       <div class="bg-neutral-900 border border-neutral-700 w-full max-w-2xl rounded-xl p-6 shadow-2xl overflow-y-auto max-h-[85vh]">
         <div class="flex justify-between items-center border-b border-neutral-800 pb-3 mb-4">
@@ -661,6 +681,7 @@
       </div>
     </div>
 
+    <!-- MODAL: PRIVACIDADE E COOKIES (AD SENSE EXIGÊNCIA CRÍTICA) -->
     <div id="modal-privacy" class="no-print fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 hidden" aria-modal="true" role="dialog">
       <div class="bg-neutral-900 border border-neutral-700 w-full max-w-2xl rounded-xl p-6 shadow-2xl overflow-y-auto max-h-[85vh]">
         <div class="flex justify-between items-center border-b border-neutral-800 pb-3 mb-4">
@@ -676,11 +697,12 @@
             <li>Com o uso de cookies de publicidade, o Google e os parceiros dele podem veicular anúncios para os usuários com base nas visitas a este e/ou a outros sites na internet.</li>
             <li>Você pode desativar a publicidade personalizada acessando as Configurações de Anúncios do Google.</li>
           </ul>
-          <p><strong>3. Analytics:</strong> Podemos coletar dados estatísticos anônimos de acesso para otimizar o carregamento e corrigir bugs estruturais.</p>
+          <p><strong>3. Analytics:</strong> Podemos coletar dados estatísticos anônimos de acesso para os fins de otimização técnica.</p>
         </div>
       </div>
     </div>
 
+    <!-- MODAL: DIREITOS AUTORAIS -->
     <div id="modal-rights" class="no-print fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 hidden" aria-modal="true" role="dialog">
       <div class="bg-neutral-900 border border-neutral-700 w-full max-w-2xl rounded-xl p-6 shadow-2xl overflow-y-auto max-h-[85vh]">
         <div class="flex justify-between items-center border-b border-neutral-800 pb-3 mb-4">
@@ -695,13 +717,21 @@
       </div>
     </div>
 
+    <!-- SCRIPTS -->
     <script>
       const API_BASE_URL = "https://www.dnd5eapi.co/api";
       let allMonsters = [];
 
+      // Variáveis para controle de reposicionamento (arrastar a imagem)
+      let isDragging = false;
+      let startY = 0;
+      let currentTop = 0;
+      const previewImg = document.getElementById("preview-art-img");
+
       document.addEventListener("DOMContentLoaded", () => {
         fetchMonsterIndex();
         setupEvents();
+        setupDragToReposition();
       });
 
       function setupEvents() {
@@ -741,11 +771,70 @@
         });
       }
 
+      // Sistema robusto de arrastar a imagem (Click and Drag no eixo Y)
+      function setupDragToReposition() {
+        // Mouse Events
+        previewImg.addEventListener("mousedown", (e) => {
+          isDragging = true;
+          startY = e.clientY - currentTop;
+          previewImg.style.transition = "none"; // Desliga transições durante o arraste
+        });
+
+        window.addEventListener("mousemove", (e) => {
+          if (!isDragging) return;
+          e.preventDefault();
+          
+          // Calcula a nova posição baseada no movimento
+          let deltaY = e.clientY - startY;
+
+          // Limita o arraste para impedir que a imagem se descole do card
+          const containerHeight = 332; // Altura aproximada do card (88mm convertidos)
+          const imgHeight = previewImg.offsetHeight;
+          const maxScroll = Math.min(0, containerHeight - imgHeight);
+
+          // Restringe entre o topo máximo e o fundo máximo
+          if (deltaY > 0) deltaY = 0;
+          if (deltaY < maxScroll) deltaY = maxScroll;
+
+          currentTop = deltaY;
+          previewImg.style.top = `${currentTop}px`;
+        });
+
+        window.addEventListener("mouseup", () => {
+          isDragging = false;
+        });
+
+        // Touch Events (Suporte para celulares e tablets)
+        previewImg.addEventListener("touchstart", (e) => {
+          isDragging = true;
+          startY = e.touches[0].clientY - currentTop;
+          previewImg.style.transition = "none";
+        });
+
+        window.addEventListener("touchmove", (e) => {
+          if (!isDragging) return;
+          let deltaY = e.touches[0].clientY - startY;
+          const containerHeight = 332;
+          const imgHeight = previewImg.offsetHeight;
+          const maxScroll = Math.min(0, containerHeight - imgHeight);
+
+          if (deltaY > 0) deltaY = 0;
+          if (deltaY < maxScroll) deltaY = maxScroll;
+
+          currentTop = deltaY;
+          previewImg.style.top = `${currentTop}px`;
+        });
+
+        window.addEventListener("touchend", () => {
+          isDragging = false;
+        });
+      }
+
       // Lógica de Modais (Acessíveis)
       function openModal(modalId) {
         const modal = document.getElementById(modalId);
         modal.classList.remove("hidden");
-        document.body.style.overflow = "hidden"; // Desabilita o scroll da página ao fundo
+        document.body.style.overflow = "hidden"; // Desabilita o scroll ao fundo
       }
 
       function closeModal(modalId) {
@@ -816,13 +905,17 @@
           const res = await fetch(`${API_BASE_URL}/monsters/${monsterIndex}`);
           const monster = await res.json();
 
+          // Reseta a posição de arraste ao carregar um monstro novo
+          currentTop = 0;
+          previewImg.style.top = "0px";
+
           // Tenta carregar a imagem padrão da API
           if (monster.image) {
             const fullImageUrl = `https://www.dnd5eapi.co${monster.image}`;
             changeImage(fullImageUrl);
             document.getElementById("art-url").value = fullImageUrl;
           } else {
-            const placeholder = "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=600";
+            const placeholder = "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?q=80&w=1000";
             changeImage(placeholder);
             document.getElementById("art-url").value = "";
           }
@@ -936,6 +1029,13 @@
         document.getElementById("preview-speed").innerText = speed;
         document.getElementById("preview-cr").innerText = cr;
 
+        // --- CÁLCULO DINÂMICO DA INICIATIVA (D&D 2024) ---
+        const dexMod = parseInt(abilities.DEX.mod);
+        const initBonus = dexMod >= 0 ? `+${dexMod}` : `${dexMod}`;
+        const initPassive = 10 + dexMod;
+        document.getElementById("preview-init").innerText = `${initBonus} (${initPassive})`;
+        // -------------------------------------------------
+
         // Atualiza a tabela de atributos no Verso
         document.getElementById("ability-scores").innerHTML = `
           <td><span class="ability-val">${abilities.STR.score} (${abilities.STR.mod})</span><br><span class="ability-save">Save ${abilities.STR.mod}</span></td>
@@ -975,6 +1075,10 @@
       function changeImage(url) {
         document.getElementById("preview-art-img").src = url;
         document.getElementById("preview-token-img").src = url;
+        
+        // Reseta o offset no carregamento de uma nova url manual
+        currentTop = 0;
+        previewImg.style.top = "0px";
       }
 
       function handleFile(e) {
